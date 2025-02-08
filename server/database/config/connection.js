@@ -5,16 +5,10 @@ dotenv.config();
 const { NODE_ENV, DATABASE_URL, DEV_DB_URL } = process.env;
 let url;
 let ssl = false;
+console.log('DATABASE_URL', DATABASE_URL);
 switch (NODE_ENV) {
-  case "production":
-    url = DATABASE_URL;
-    ssl = {
-      rejectUnauthorized: false,
-    };
-    console.log(url + " ----- for Production");
-    break;
   case "development":
-    url = DEV_DB_URL;
+    url = DATABASE_URL;
     console.log(url + "---- for Development");
     break;
   default:
@@ -23,7 +17,7 @@ switch (NODE_ENV) {
 
 if (!url) throw new Error("There is no Url Found");
 
-const sequelize = new Sequelize(process.env.DEV_DB_URL, {
+const sequelize = new Sequelize(process.env.DATABASE_URL, {
   dialect: "postgres",
 });
 
