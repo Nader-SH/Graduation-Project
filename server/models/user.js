@@ -1,56 +1,19 @@
 import { Model, DataTypes } from 'sequelize';
-import sequelize from "../database/config/connection.js";
+import sequelize from '../database/config/connection.js';
 
-export default class User extends Model {
-    id;
-    firstName;
-    lastName;
-    email;
-    password;
-    image;
-    type;
-}
+class User extends Model {}
 
 User.init(
     {
-        id: {
-            type: DataTypes.INTEGER,
-            primaryKey: true,
-            autoIncrement: true,
-        },
-        firstName: {
-            type: DataTypes.STRING,
-            allowNull: false,
-            unique: false,
-        },
-        lastName: {
-            type: DataTypes.STRING,
-            allowNull: false,
-            unique: false,
-        },
-        email: {
-            type: DataTypes.STRING,
-            allowNull: false,
-            unique: true,
-        },
-        password: {
-            type: DataTypes.STRING,
-            allowNull: false,
-        },
-        image: {
-            type: DataTypes.STRING,
-            defaultValue: '',
-            allowNull: true,
-        },
-        type: {
-            type: DataTypes.BOOLEAN,
-            defaultValue: false,
-        },
+        id: { type: DataTypes.BIGINT, primaryKey: true, allowNull: false },
+        firstName: { type: DataTypes.STRING, allowNull: false },
+        lastName: { type: DataTypes.STRING, allowNull: false },
+        email: { type: DataTypes.STRING, allowNull: false },
+        password: { type: DataTypes.STRING, allowNull: false },
+        type: { type: DataTypes.STRING, allowNull: false },
+        image: { type: DataTypes.STRING, allowNull: false },
     },
-    { sequelize }
+    { sequelize, modelName: 'user' }
 );
 
-
-export {
-    User, sequelize
-}
+export default User;

@@ -1,73 +1,29 @@
-import sequelize from "../database/config/connection.js";
-import Categories from "./categories.js";
-import Comments from "./comments.js";
-import Companys from "./companys.js";
-import Courses from "./courses.js";
-import FavoriteCourses from "./favoriteCourses.js";
-import Notifications from "./notifications.js";
-import Rates from "./rates.js";
-import ReplyComment from "./replyComment.js";
-import Reports from "./reports.js";
-import Requests from "./requests.js";
-import Sections from "./sections.js";
-import SectionStatus from "./sectionStatus.js";
-import User from "./user.js";
 
 
+import sequelize from '../database/config/connection.js';
+import User from './user.js';
+import Request from './request.js';
+import AssistanceType from './AssistanceType.js';
+import Donor from './donor.js';
+import Donation from './donation.js';
+import Chat from './chat.js';
 
-User.hasMany(FavoriteCourses, { foreignKey: "userId" });
-FavoriteCourses.belongsTo(User, { foreignKey: "userId" });
+User.hasMany(Request, { foreignKey: 'userId' });
+Request.belongsTo(User);
 
+User.hasMany(Chat, { foreignKey: 'senderId' });
+Chat.belongsTo(User, { foreignKey: 'id' });
 
-Courses.hasMany(FavoriteCourses, { foreignKey: "courseId" });
-FavoriteCourses.belongsTo(Courses, { foreignKey: "courseId" });
+Donor.hasMany(Chat, { foreignKey: 'senderId' });
+Chat.belongsTo(Donor, { foreignKey: 'id' });
 
+Donor.hasMany(AssistanceType, { foreignKey: 'donerId' });
+AssistanceType.belongsTo(Donor, { foreignKey: 'id' });
 
-User.hasMany(Requests, { foreignKey: "userId" });
-Requests.belongsTo(User, { foreignKey: "userId" });
+AssistanceType.hasMany(Donation, { foreignKey: 'assistanceId' });
+Donation.belongsTo(AssistanceType, { foreignKey: 'id' });
 
+AssistanceType.hasMany(Request, { foreignKey: 'assistanceId' });
+Request.belongsTo(AssistanceType, { foreignKey: 'id' });
 
-User.hasMany(Comments, { foreignKey: "userId" });
-Comments.belongsTo(User, { foreignKey: "userId" });
-
-Comments.hasMany(ReplyComment, { foreignKey: "userId" });
-ReplyComment.belongsTo(Comments, { foreignKey: "userId" });
-
-User.hasMany(Rates, { foreignKey: "userId" });
-Rates.belongsTo(User, { foreignKey: "userId" });
-
-
-Categories.hasMany(Courses, { foreignKey: "categorieId" });
-Courses.belongsTo(Categories, { foreignKey: "categorieId" });
-
-
-Courses.hasMany(Sections, { foreignKey: "courseId" });
-Sections.belongsTo(Courses, { foreignKey: "courseId" });
-
-
-Sections.hasMany(Comments, { foreignKey: "sectionId" });
-Comments.belongsTo(Sections, { foreignKey: "sectionId" });
-
-
-Courses.hasMany(Rates, { foreignKey: "courseId" });
-Rates.belongsTo(Courses, { foreignKey: "courseId" });
-
-
-Courses.hasMany(Reports, { foreignKey: "courseId" });
-Reports.belongsTo(Courses, { foreignKey: "courseId" });
-
-
-User.hasMany(Reports, { foreignKey: "userId" });
-Reports.belongsTo(User, { foreignKey: "userId" });
-
-
-Sections.hasMany(Reports, { foreignKey: "sectionId" });
-Reports.belongsTo(Sections, { foreignKey: "sectionId" });
-
-
-
-
-
-export {
-    sequelize, Categories, Comments, Companys, Courses, FavoriteCourses, Notifications, Rates, ReplyComment, Reports, Requests, Sections, SectionStatus, User
-}
+export { sequelize, User, Request, AssistanceType, Donor, Donation, Chat };
