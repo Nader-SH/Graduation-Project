@@ -2,7 +2,7 @@ import { Model, DataTypes } from 'sequelize';
 import sequelize from '../database/config/connection.js';
 import Donor from './donor.js';
 import Request from './request.js';
-import AssistanceType from './AssistanceType.js';
+import AssistanceType from './assistanceType.js';
 
 class Donation extends Model {}
 

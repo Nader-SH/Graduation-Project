@@ -1,7 +1,7 @@
 import { Model, DataTypes } from 'sequelize';
 import sequelize from '../database/config/connection.js';
 import User from './user.js';
-import AssistanceType from './AssistanceType.js';
+import AssistanceType from './assistanceType.js';
 
 class Request extends Model {}
 
