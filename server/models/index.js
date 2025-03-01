@@ -1,5 +1,5 @@
 import sequelize from '../database/config/connection.js';
-import User from './User.js';
+import User from './user.js';
 import Request from './request.js';
 import AssistanceType from './assistanceType.js';
 import Donor from './donor.js';
