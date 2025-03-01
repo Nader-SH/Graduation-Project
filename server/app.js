@@ -16,13 +16,27 @@ if (!process.env.JWT_SECRET) {
     process.exit(1);
 }
 
+// Add allowed origins
+const allowedOrigins = [
+    'http://localhost:3000',
+    'https://your-frontend-domain.com' // Replace with your actual frontend domain
+];
+
 app.use([
     compression(),
     cookieParser(),
     express.urlencoded({ extended: true }),
     express.json(),
     cors({
-        origin: 'http://localhost:3000',
+        origin: function(origin, callback) {
+            // Allow requests with no origin (like mobile apps or curl requests)
+            if (!origin) return callback(null, true);
+            
+            if (allowedOrigins.indexOf(origin) === -1) {
+                return callback(new Error('The CORS policy for this site does not allow access from the specified Origin.'), false);
+            }
+            return callback(null, true);
+        },
         credentials: true
     }),
 ]);
