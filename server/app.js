@@ -19,7 +19,7 @@ if (!process.env.JWT_SECRET) {
 // Add allowed origins
 const allowedOrigins = [
     'http://localhost:3000',
-    'https://your-frontend-domain.com' // Replace with your actual frontend domain
+    'https://graduation-project-1-3tvj.onrender.com'
 ];
 
 app.use([
