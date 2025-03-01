@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "cross-env NODE_ENV=development nodemon index.js",
     "buildDb": "cross-env NODE_ENV=development node ./database/config/buildDb.js",
+    "buildDbPord": "node ./database/config/buildDb.js",
     "buildSeeds": "cross-env NODE_ENV=development node server/database/seeds/buildSeeds.js"
   },
   "author": "",
