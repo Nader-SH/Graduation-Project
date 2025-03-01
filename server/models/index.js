@@ -6,32 +6,46 @@ import Donor from './donor.js';
 import Donation from './donation.js';
 import Chat from './chat.js';
 
-// Define associations in correct order
-// First, create tables without dependencies
-User.sync();
-Donor.sync();
+// Force sync all models in the correct order
+const syncModels = async () => {
+    try {
+        // First, sync independent models
+        await User.sync();
+        await Donor.sync();
 
-// Then create AssistanceType which depends on Donor
-AssistanceType.belongsTo(Donor, { foreignKey: 'donorId' });
-Donor.hasMany(AssistanceType, { foreignKey: 'donorId' });
-AssistanceType.sync();
+        // Then sync AssistanceType which depends on Donor
+        await AssistanceType.sync();
 
-// Then create tables that depend on AssistanceType
-Request.belongsTo(User, { foreignKey: 'userId' });
-Request.belongsTo(AssistanceType, { foreignKey: 'assistanceTypeId' });
+        // Then sync models that depend on AssistanceType
+        await Request.sync();
+        await Donation.sync();
+        await Chat.sync();
+    } catch (error) {
+        console.error('Error syncing models:', error);
+        throw error;
+    }
+};
+
+// Define associations
 User.hasMany(Request, { foreignKey: 'userId' });
-AssistanceType.hasMany(Request, { foreignKey: 'assistanceTypeId' });
-Request.sync();
+Request.belongsTo(User, { foreignKey: 'userId' });
 
-Donation.belongsTo(AssistanceType, { foreignKey: 'assistanceTypeId' });
-AssistanceType.hasMany(Donation, { foreignKey: 'assistanceTypeId' });
-Donation.sync();
-
-// Finally, create Chat which depends on both User and Donor
-Chat.belongsTo(User, { foreignKey: 'senderId' });
-Chat.belongsTo(Donor, { foreignKey: 'senderId' });
 User.hasMany(Chat, { foreignKey: 'senderId' });
+Chat.belongsTo(User, { foreignKey: 'senderId' });
+
 Donor.hasMany(Chat, { foreignKey: 'senderId' });
-Chat.sync();
+Chat.belongsTo(Donor, { foreignKey: 'senderId' });
+
+Donor.hasMany(AssistanceType, { foreignKey: 'donorId' });
+AssistanceType.belongsTo(Donor, { foreignKey: 'donorId' });
+
+AssistanceType.hasMany(Donation, { foreignKey: 'assistanceTypeId' });
+Donation.belongsTo(AssistanceType, { foreignKey: 'assistanceTypeId' });
+
+AssistanceType.hasMany(Request, { foreignKey: 'assistanceTypeId' });
+Request.belongsTo(AssistanceType, { foreignKey: 'assistanceTypeId' });
+
+// Sync models
+await syncModels();
 
 export { sequelize, User, Request, AssistanceType, Donor, Donation, Chat };

@@ -1,9 +1,9 @@
 import { DataTypes } from 'sequelize';
 import sequelize from '../database/config/connection.js';
 
-const AssistanceType = sequelize.define('AssistanceType', {
+const AssistanceType = sequelize.define('assistanceTypes', {
   id: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.BIGINT,
     primaryKey: true,
     autoIncrement: true,
   },
@@ -14,6 +14,13 @@ const AssistanceType = sequelize.define('AssistanceType', {
   description: {
     type: DataTypes.TEXT,
     allowNull: true,
+  },
+  donorId: {
+    type: DataTypes.BIGINT,
+    references: {
+      model: 'donors',
+      key: 'id'
+    }
   }
 }, {
   timestamps: true
