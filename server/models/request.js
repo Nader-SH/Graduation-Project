@@ -1,7 +1,5 @@
 import { Model, DataTypes } from 'sequelize';
 import sequelize from '../database/config/connection.js';
-import User from './user.js';
-import AssistanceType from './assistanceType.js';
 
 class Request extends Model {}
 
@@ -14,8 +12,22 @@ Request.init(
         headOfFamilyStatus: { type: DataTypes.STRING, allowNull: false },
         location: { type: DataTypes.STRING, allowNull: false },
         status: { type: DataTypes.STRING, allowNull: false },
-        userId: { type: DataTypes.BIGINT, allowNull: false, references: { model: User, key: 'id' } },
-        assistanceId: { type: DataTypes.BIGINT, allowNull: false, references: { model: AssistanceType, key: 'id' } },
+        userId: { 
+            type: DataTypes.BIGINT, 
+            allowNull: false, 
+            references: { 
+                model: 'users',
+                key: 'id' 
+            } 
+        },
+        assistanceTypeId: {
+            type: DataTypes.BIGINT, 
+            allowNull: false, 
+            references: { 
+                model: 'assistanceTypes',
+                key: 'id' 
+            } 
+        },
     },
     { sequelize, modelName: 'requests' }
 );
