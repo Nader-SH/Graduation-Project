@@ -22,7 +22,7 @@ const App = () => {
             <div className="max-w-7xl mx-auto">
               <Routes>
                 {/* Public Routes */}
-                <Route path="/" element={<LandingPage />} />
+                {/* <Route path="/" element={<LandingPage />} /> */}
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
 
@@ -41,8 +41,8 @@ const App = () => {
               </Routes>
             </div>
           </Content>
-          <Footer />
         </Layout>
+          <Footer />
       </AuthProvider>
     </Router>
   );
