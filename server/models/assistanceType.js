@@ -1,15 +1,22 @@
-import { Model, DataTypes } from 'sequelize';
+import { DataTypes } from 'sequelize';
 import sequelize from '../database/config/connection.js';
 
-class AssistanceType extends Model {}
-
-AssistanceType.init(
-    {
-        id: { type: DataTypes.BIGINT, primaryKey: true, allowNull: false },
-        assistanceName: { type: DataTypes.BIGINT, allowNull: false },
-        donerId: { type: DataTypes.BIGINT, allowNull: false },
-    },
-    { sequelize, modelName: 'assistanceType' }
-);
+const AssistanceType = sequelize.define('AssistanceType', {
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+  },
+  name: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  description: {
+    type: DataTypes.TEXT,
+    allowNull: true,
+  }
+}, {
+  timestamps: true
+});
 
 export default AssistanceType;
