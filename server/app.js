@@ -4,7 +4,7 @@ import cookieParser from "cookie-parser";
 import * as dotenv from "dotenv";
 import cors from "cors";
 import router from "./routes/index.js";
-import userRouter from './routes/users.js';
+import userRouter from './routes/userRouter.js';
 dotenv.config();
 const app = express();
 
@@ -24,9 +24,9 @@ app.use(cors({
         'http://localhost:3000',
         'https://graduation-project-1-3tvj.onrender.com'
     ],
+    credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: true
+    allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
 app.use([

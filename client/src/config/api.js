@@ -1,5 +1,13 @@
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://graduation-project-1-3tvj.onrender.com/api';
 
+export const apiConfig = {
+    baseURL: API_BASE_URL,
+    headers: {
+        'Content-Type': 'application/json',
+    },
+    credentials: 'include'
+};
+
 export default API_BASE_URL;
 
 // Example API call function
