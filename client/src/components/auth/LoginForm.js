@@ -10,9 +10,22 @@ const LoginForm = () => {
 
   const onFinish = async (values) => {
     try {
-      await login(values.email, values.password);
-      message.success('Login successful');
-      navigate('/dashboard');
+      const response = await fetch(`http://localhost:8000/api/users/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email: values.email, password: values.password }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        login(data.user);
+        message.success('Login successful');
+        navigate('/dashboard');
+      } else {
+        message.error('Login failed');
+      }
     } catch (error) {
       message.error('Login failed: ' + error.message);
     }

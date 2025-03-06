@@ -1,0 +1,58 @@
+.landing-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 50px;
+  background-color: #e9ecef; /* Light gray background */
+  color: #333; /* Dark text color */
+  text-align: center;
+  border-radius: 8px; /* Rounded corners */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  transition: background-color 0.3s ease; /* Smooth background transition */
+}
+
+.landing-container:hover {
+  background-color: #f0f2f5; /* Change background on hover */
+}
+
+h1 {
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+  color: #007bff; /* Blue color for the main heading */
+}
+
+h2 {
+  font-size: 2rem;
+  margin: 20px 0;
+  color: #0056b3; /* Darker blue for subheadings */
+}
+
+p {
+  font-size: 1.2rem;
+  margin: 10px 0;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+li {
+  font-size: 1.2rem;
+  margin: 5px 0;
+}
+
+blockquote {
+  font-style: italic;
+  margin: 20px 0;
+  padding: 10px;
+  border-left: 4px solid #007bff; /* Blue left border */
+  background-color: #ffffff; /* White background for blockquote */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  transition: transform 0.3s ease; /* Smooth transform transition */
+}
+
+blockquote:hover {
+  transform: scale(1.02); /* Slightly enlarge on hover */
+} 

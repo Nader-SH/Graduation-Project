@@ -13,22 +13,27 @@ const RequestForm = () => {
 
   const onFinish = async (values) => {
     try {
-      const response = await fetch('/api/requests', {
+      const requestData = {
+        ...values,
+        userId: user?.id
+      };
+
+      console.log(user); // Check if user is populated
+
+      const response = await fetch(`http://localhost:8000/api/requests`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          ...values,
-          userId: user?.id
-        }),
+        body: JSON.stringify(requestData),
       });
 
       if (response.ok) {
         message.success('Request submitted successfully');
         navigate('/request-success');
       } else {
-        message.error('Failed to submit request');
+        const errorData = await response.json();
+        message.error(`Failed to submit request: ${errorData.message}`);
       }
     } catch (error) {
       message.error('Error submitting request');

@@ -1,6 +1,8 @@
 import Request from '../models/request.js';
 import AssistanceType from '../models/assistanceType.js';
 import User from '../models/user.js';
+import express from 'express'; // Import express as a whole
+const { Response } = express; // Destructure Response from express
 
 // Get all requests
 export const getAllRequests = async (req, res) => {
@@ -14,8 +16,8 @@ export const getAllRequests = async (req, res) => {
     
     res.status(200).json(requests);
   } catch (error) {
-    console.error('Error getting requests:', error);
-    res.status(500).json({ message: 'Failed to get requests', error: error.message });
+    console.error('Error fetching requests:', error);
+    res.status(500).json({ message: 'Internal server error' });
   }
 };
 
@@ -44,44 +46,24 @@ export const getRequestById = async (req, res) => {
 
 // Create new request
 export const createRequest = async (req, res) => {
+  const { applicantName, nationalId, familyMembersCount, headOfFamilyStatus, location, assistanceTypeId, description } = req.body;
+  console.log(req.body);
   try {
-    const {
-      applicantName,
-      nationalId,
-      familyMembersCount,
-      headOfFamilyStatus,
-      location,
-      assistanceTypeId,
-      userId
-    } = req.body;
-    
-    // Set default userId if not provided
-    const finalUserId = userId || 1; // Default to user ID 1 if not authenticated
-    
-    // Validate assistanceTypeId exists
-    const assistanceType = await AssistanceType.findByPk(assistanceTypeId);
-    if (!assistanceType) {
-      return res.status(400).json({ message: 'Invalid assistance type' });
-    }
-    
     const newRequest = await Request.create({
       applicantName,
       nationalId,
       familyMembersCount,
       headOfFamilyStatus,
       location,
-      status: 'pending', // Default status
-      userId: finalUserId,
-      assistanceTypeId
+      assistanceTypeId,
+      description,
+      status: 'pending', // Default status when a request is created
     });
-    
-    res.status(201).json({
-      message: 'Request created successfully',
-      request: newRequest
-    });
+
+    res.status(201).json(newRequest); // Respond with the created request
   } catch (error) {
     console.error('Error creating request:', error);
-    res.status(500).json({ message: 'Failed to create request', error: error.message });
+    res.status(500).json({ message: 'Internal server error' });
   }
 };
 

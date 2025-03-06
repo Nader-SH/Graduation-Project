@@ -7,14 +7,27 @@ const { Option } = Select;
 
 const RegisterForm = () => {
   const navigate = useNavigate();
-  const { register } = useAuth();
+  const { login } = useAuth();
   const [form] = Form.useForm();
 
   const onFinish = async (values) => {
     try {
-      await register(values);
-      message.success('Registration successful');
-      navigate('/login');
+      const response = await fetch(`http://localhost:8000/api/auth/register`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(values),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        login(data.user); // Log in the user after registration
+        message.success('Registration successful');
+        navigate('/dashboard');
+      } else {
+        message.error('Registration failed');
+      }
     } catch (error) {
       message.error('Registration failed: ' + error.message);
     }
@@ -28,20 +41,25 @@ const RegisterForm = () => {
         onFinish={onFinish}
       >
         <Form.Item
-          name="name"
-          label="Full Name"
-          rules={[{ required: true, message: 'Please enter your full name' }]}
+          name="firstName"
+          label="First Name"
+          rules={[{ required: true, message: 'Please enter your first name' }]}
         >
-          <Input placeholder="Enter your full name" />
+          <Input placeholder="Enter your first name" />
+        </Form.Item>
+
+        <Form.Item
+          name="lastName"
+          label="Last Name"
+          rules={[{ required: true, message: 'Please enter your last name' }]}
+        >
+          <Input placeholder="Enter your last name" />
         </Form.Item>
 
         <Form.Item
           name="email"
           label="Email"
-          rules={[
-            { required: true, message: 'Please enter your email' },
-            { type: 'email', message: 'Please enter a valid email' }
-          ]}
+          rules={[{ required: true, message: 'Please enter your email' }]}
         >
           <Input placeholder="Enter your email" />
         </Form.Item>
@@ -49,10 +67,7 @@ const RegisterForm = () => {
         <Form.Item
           name="password"
           label="Password"
-          rules={[
-            { required: true, message: 'Please enter your password' },
-            { min: 6, message: 'Password must be at least 6 characters' }
-          ]}
+          rules={[{ required: true, message: 'Please enter your password' }]}
         >
           <Input.Password placeholder="Enter your password" />
         </Form.Item>
@@ -61,30 +76,28 @@ const RegisterForm = () => {
           name="confirmPassword"
           label="Confirm Password"
           dependencies={['password']}
-          rules={[
-            { required: true, message: 'Please confirm your password' },
-            ({ getFieldValue }) => ({
-              validator(_, value) {
-                if (!value || getFieldValue('password') === value) {
-                  return Promise.resolve();
-                }
-                return Promise.reject(new Error('Passwords do not match'));
-              },
-            }),
-          ]}
+          rules={[{ required: true, message: 'Please confirm your password' }]}
         >
           <Input.Password placeholder="Confirm your password" />
         </Form.Item>
 
         <Form.Item
-          name="role"
-          label="Register as"
-          rules={[{ required: true, message: 'Please select a role' }]}
+          name="type"
+          label="User Type"
+          rules={[{ required: true, message: 'Please select your user type' }]}
         >
-          <Select placeholder="Select your role">
+          <Select placeholder="Select your user type">
             <Option value="user">User</Option>
-            <Option value="donor">Donor</Option>
+            <Option value="admin">Admin</Option>
           </Select>
+        </Form.Item>
+
+        <Form.Item
+          name="image"
+          label="Profile Image URL"
+          rules={[{ required: true, message: 'Please enter your profile image URL' }]}
+        >
+          <Input placeholder="Enter your profile image URL" />
         </Form.Item>
 
         <Form.Item>

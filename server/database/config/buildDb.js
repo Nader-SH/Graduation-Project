@@ -17,10 +17,15 @@ const config = {
 const environment = process.env.NODE_ENV || 'development';
 const dbConfig = config[environment];
 
-const buildDb = async () => {
-  await sequelize.sync({ force: true });
+const syncDatabase = async () => {
+  try {
+    await sequelize.sync({ force: true });
+    console.log('Database synced successfully');
+  } catch (error) {
+    console.error('Error syncing database:', error);
+  }
 };
 
-buildDb();
+syncDatabase();
 
-export default buildDb;
+export default syncDatabase;

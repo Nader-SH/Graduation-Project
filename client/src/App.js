@@ -8,7 +8,7 @@ import Footer from './components/Layout/Footer';
 import LoginForm from './components/auth/LoginForm';
 import RegisterForm from './components/auth/RegisterForm';
 import RequestForm from './components/requests/RequestForm';
-import RequestList from './components/admin/RequestList';
+import RequestList from './components/requests/RequestList';
 import RequestSuccess from './components/requests/RequestSuccess';
 import DashboardPage from './pages/DashboardPage';
 import LandingPage from './pages/LandingPage';
@@ -30,10 +30,10 @@ const App = () => {
               <Route path="/register" element={<RegisterForm />} />
               <Route path="/requests/new" element={<RequestForm />} />
               <Route path="/request-success" element={<RequestSuccess />} />
+              <Route path="/admin/requests" element={<RequestList />} />
 
               {/* Protected Routes */}
               <Route path="/dashboard" element={<DashboardPage />} />
-              <Route path="/admin/requests" element={<RequestList />} />
 
               {/* Catch all route */}
               <Route path="*" element={<Navigate to="/" replace />} />

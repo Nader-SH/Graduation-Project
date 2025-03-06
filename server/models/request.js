@@ -1,7 +1,9 @@
-import { DataTypes } from 'sequelize';
-import sequelize from '../database/config/connection.js';
+import { Model, DataTypes } from 'sequelize';
+import sequelize from '../config/database.js';
 
-const Request = sequelize.define('requests', {
+class Request extends Model {}
+
+Request.init({
     id: {
         type: DataTypes.BIGINT,
         primaryKey: true,
@@ -16,7 +18,7 @@ const Request = sequelize.define('requests', {
         allowNull: false
     },
     familyMembersCount: {
-        type: DataTypes.STRING,
+        type: DataTypes.INTEGER,
         allowNull: false
     },
     headOfFamilyStatus: {
@@ -29,25 +31,19 @@ const Request = sequelize.define('requests', {
     },
     status: {
         type: DataTypes.STRING,
-        allowNull: false
-    },
-    userId: {
-        type: DataTypes.BIGINT,
-        allowNull: false,
-        references: {
-            model: 'users',
-            key: 'id'
-        }
+        defaultValue: 'pending'
     },
     assistanceTypeId: {
-        type: DataTypes.BIGINT,
-        allowNull: false,
-        references: {
-            model: 'assistanceTypes',
-            key: 'id'
-        }
+        type: DataTypes.INTEGER,
+        allowNull: true
+    },
+    description: {
+        type: DataTypes.TEXT,
+        allowNull: true
     }
 }, {
+    sequelize,
+    modelName: 'Request',
     timestamps: true
 });
 

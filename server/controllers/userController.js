@@ -32,7 +32,7 @@ export const register = async (req, res) => {
         // Hash password
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
-
+        console.log('hashedPassword',hashedPassword);
         // Create new user
         const newUser = await User.create({
             firstName,
@@ -73,7 +73,7 @@ export const login = async (req, res) => {
         if (!user) {
             return res.status(404).json({ message: "User not found" });
         }
-
+        console.log(password, user.password);
         // Verify password
         const validPassword = await bcrypt.compare(password, user.password);
         if (!validPassword) {

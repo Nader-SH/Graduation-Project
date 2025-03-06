@@ -1,6 +1,6 @@
 import React from 'react';
 import { Layout, Menu } from 'antd';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
 const { Header } = Layout;
@@ -8,19 +8,20 @@ const { Header } = Layout;
 const HeaderComponent = () => {
   const { isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const getMenuItems = () => {
     if (isAuthenticated) {
       return [
         {
-          key: 'dashboard',
+          key: '/dashboard',
           label: 'Dashboard',
           onClick: () => navigate('/dashboard')
         },
         {
-          key: 'newRequest',
-          label: 'New Request',
-          onClick: () => navigate('/requests/new')
+          key: '/admin/requests',
+          label: 'Request List',
+          onClick: () => navigate('/admin/requests')
         },
         {
           key: 'logout',
@@ -31,15 +32,20 @@ const HeaderComponent = () => {
     }
     return [
       {
-        key: 'login',
+        key: '/login',
         label: 'Login',
         onClick: () => navigate('/login')
       },
       {
-        key: 'register',
+        key: '/register',
         label: 'Register',
         onClick: () => navigate('/register')
-      }
+      },
+      {
+        key: '/requests/new',
+        label: 'New Request',
+        onClick: () => navigate('/requests/new')
+      },
     ];
   };
 
@@ -51,6 +57,7 @@ const HeaderComponent = () => {
       <Menu
         theme="dark"
         mode="horizontal"
+        selectedKeys={[location.pathname]}
         items={getMenuItems()}
         style={{
           flex: 1,
