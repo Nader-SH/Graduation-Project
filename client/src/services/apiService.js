@@ -40,7 +40,13 @@ export const authService = {
   login: (credentials) => callApi('/users/login', 'POST', credentials),
   register: (userData) => callApi('/users/register', 'POST', userData),
   logout: () => callApi('/users/logout', 'POST'),
-  getProfile: () => callApi('/users/profile')
+  getProfile: () => callApi('/users/profile'),
+  
+  // Request services
+  submitRequest: (requestData) => callApi('/requests', 'POST', requestData),
+  getRequests: () => callApi('/requests'),
+  getRequestById: (id) => callApi(`/requests/${id}`),
+  updateRequestStatus: (id, data) => callApi(`/requests/${id}/status`, 'PUT', data)
 };
 
 // Add other services as needed

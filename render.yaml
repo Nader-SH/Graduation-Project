@@ -1,9 +1,0 @@
-services:
-  - type: web
-    name: client
-    env: node
-    buildCommand: REACT_APP_API_URL=$REACT_APP_API_URL npm run build
-    startCommand: npm start
-    envVars:
-      - key: REACT_APP_API_URL
-        value: https://graduation-project-1-3tvj.onrender.com/api 

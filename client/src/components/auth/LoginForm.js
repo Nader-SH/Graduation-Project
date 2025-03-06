@@ -1,58 +1,57 @@
-import { useState } from 'react';
-import { authService } from '../../services/apiService';
+import React from 'react';
+import { Form, Input, Button, Card, message } from 'antd';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 
-function LoginForm() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+const LoginForm = () => {
+  const navigate = useNavigate();
+  const { login } = useAuth();
+  const [form] = Form.useForm();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
-    
+  const onFinish = async (values) => {
     try {
-      const response = await authService.login({ email, password });
-      // Handle successful login
-      console.log('Login successful:', response);
-      
-      // Redirect or update state
+      await login(values.email, values.password);
+      message.success('Login successful');
+      navigate('/dashboard');
     } catch (error) {
-      setError(error.message || 'Login failed. Please try again.');
-    } finally {
-      setLoading(false);
+      message.error('Login failed: ' + error.message);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      {error && <div className="error">{error}</div>}
-      <div>
-        <label htmlFor="email">Email</label>
-        <input
-          type="email"
-          id="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-      </div>
-      <div>
-        <label htmlFor="password">Password</label>
-        <input
-          type="password"
-          id="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-      </div>
-      <button type="submit" disabled={loading}>
-        {loading ? 'Logging in...' : 'Login'}
-      </button>
-    </form>
+    <Card title="Login" style={{ maxWidth: 400, margin: '40px auto' }}>
+      <Form
+        form={form}
+        layout="vertical"
+        onFinish={onFinish}
+      >
+        <Form.Item
+          name="email"
+          label="Email"
+          rules={[
+            { required: true, message: 'Please enter your email' },
+            { type: 'email', message: 'Please enter a valid email' }
+          ]}
+        >
+          <Input placeholder="Enter your email" />
+        </Form.Item>
+
+        <Form.Item
+          name="password"
+          label="Password"
+          rules={[{ required: true, message: 'Please enter your password' }]}
+        >
+          <Input.Password placeholder="Enter your password" />
+        </Form.Item>
+
+        <Form.Item>
+          <Button type="primary" htmlType="submit" block>
+            Login
+          </Button>
+        </Form.Item>
+      </Form>
+    </Card>
   );
-}
+};
 
 export default LoginForm; 
