@@ -6,9 +6,12 @@ import Donor from './donor.js';
 import Donation from './donation.js';
 import Chat from './chat.js';
 
-// Remove associations
-// User.hasMany(Request, { foreignKey: 'userId' });
-// Request.belongsTo(User, { foreignKey: 'userId' });
+// Define associations
+User.hasMany(Request, { foreignKey: 'userId' });
+Request.belongsTo(User, { foreignKey: 'userId' });
+
+AssistanceType.hasMany(Request, { foreignKey: 'assistanceTypeId' });
+Request.belongsTo(AssistanceType, { foreignKey: 'assistanceTypeId' });
 
 User.hasMany(Chat, { foreignKey: 'senderId' });
 Chat.belongsTo(User, { foreignKey: 'senderId' });

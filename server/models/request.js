@@ -35,7 +35,11 @@ Request.init({
     },
     assistanceTypeId: {
         type: DataTypes.INTEGER,
-        allowNull: true
+        allowNull: true,
+        references: {
+            model: 'assistanceTypes',
+            key: 'id'
+        }
     },
     description: {
         type: DataTypes.TEXT,

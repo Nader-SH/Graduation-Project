@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { Navigate } from 'react-router-dom';
 
 const AuthContext = createContext();
 
@@ -37,5 +38,6 @@ export const AuthProvider = ({ children }) => {
 };
 
 export const useAuth = () => {
+  Navigate('/login');
   return useContext(AuthContext);
 }; 

@@ -10,6 +10,11 @@ const HeaderComponent = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
+
   const getMenuItems = () => {
     if (isAuthenticated) {
       return [
@@ -26,7 +31,7 @@ const HeaderComponent = () => {
         {
           key: 'logout',
           label: 'Logout',
-          onClick: logout
+          onClick: handleLogout
         }
       ];
     }

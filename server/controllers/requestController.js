@@ -8,16 +8,12 @@ const { Response } = express; // Destructure Response from express
 export const getAllRequests = async (req, res) => {
   try {
     const requests = await Request.findAll({
-      include: [
-        { model: AssistanceType, as: 'assistanceType' },
-        { model: User, as: 'user', attributes: ['id', 'firstName', 'lastName', 'email'] }
-      ]
     });
     
     res.status(200).json(requests);
   } catch (error) {
     console.error('Error fetching requests:', error);
-    res.status(500).json({ message: 'Internal server error' });
+    res.status(500).json({ message: 'Error fetching requests' });
   }
 };
 
@@ -28,8 +24,7 @@ export const getRequestById = async (req, res) => {
     
     const request = await Request.findByPk(id, {
       include: [
-        { model: AssistanceType, as: 'assistanceType' },
-        { model: User, as: 'user', attributes: ['id', 'firstName', 'lastName', 'email'] }
+        
       ]
     });
     
