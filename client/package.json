@@ -17,8 +17,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "REACT_APP_API_URL=https://graduation-project-1-3tvj.onrender.com/api react-scripts build",
-    "build:dev": "REACT_APP_API_URL=http://localhost:8000/api react-scripts build",
+    "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

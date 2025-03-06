@@ -1,9 +1,7 @@
-// API configuration
-const isProd = process.env.NODE_ENV === 'production';
+// API configuration - always use production URL
+const API_BASE_URL = 'https://graduation-project-1-3tvj.onrender.com/api';
 
-// Set the base URL based on environment
-const API_BASE_URL = isProd 
-  ? 'https://graduation-project-1-3tvj.onrender.com/api'
-  : 'http://localhost:8000/api';
+// Log the API URL being used
+console.log('Using API URL:', API_BASE_URL);
 
 export default API_BASE_URL; 
