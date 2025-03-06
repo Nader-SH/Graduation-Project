@@ -4,6 +4,7 @@ import cookieParser from "cookie-parser";
 import * as dotenv from "dotenv";
 import cors from "cors";
 import router from "./routes/index.js";
+import userRouter from './routes/users.js';
 dotenv.config();
 const app = express();
 
@@ -16,30 +17,27 @@ if (!process.env.JWT_SECRET) {
     process.exit(1);
 }
 
-// Add allowed origins
-const allowedOrigins = [
-    'http://localhost:3000',
-    'https://graduation-project-1-3tvj.onrender.com'
-];
+// CORS configuration
+app.use(cors({
+    origin: [
+        'http://localhost:8000',
+        'http://localhost:3000',
+        'https://graduation-project-1-3tvj.onrender.com'
+    ],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true
+}));
 
 app.use([
     compression(),
     cookieParser(),
     express.urlencoded({ extended: true }),
     express.json(),
-    cors({
-        origin: function(origin, callback) {
-            // Allow requests with no origin (like mobile apps or curl requests)
-            if (!origin) return callback(null, true);
-            
-            if (allowedOrigins.indexOf(origin) === -1) {
-                return callback(new Error('The CORS policy for this site does not allow access from the specified Origin.'), false);
-            }
-            return callback(null, true);
-        },
-        credentials: true
-    }),
 ]);
+
+// Update the base path for all API routes
+app.use('/api/users', userRouter);
 app.use(router);
 app.use((req, res, next) => res.status(404).json({ error: "Not Found" }));
 

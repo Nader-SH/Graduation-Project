@@ -1,4 +1,4 @@
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://graduation-project-1-3tvj.onrender.com';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://graduation-project-1-3tvj.onrender.com/api';
 
 export default API_BASE_URL;
 

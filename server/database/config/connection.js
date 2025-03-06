@@ -19,7 +19,7 @@ if (NODE_ENV === 'production') {
     });
 } else {
     // Development connection
-    sequelize = new Sequelize(DATABASE_URL || 'postgres://postgres:postgres@localhost:5432/postgres', {
+    sequelize = new Sequelize(DATABASE_URL, {
         dialect: 'postgres',
         logging: false, // Set to console.log to see SQL queries
     });
