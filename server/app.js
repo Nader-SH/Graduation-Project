@@ -23,16 +23,7 @@ if (!process.env.JWT_SECRET) {
 }
 
 // CORS configuration
-app.use(cors({
-    origin: [
-        'http://localhost:8000',
-        'http://localhost:3000',
-        'https://graduation-project-1-3tvj.onrender.com'
-    ],
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization']
-}));
+app.use(cors());
 
 app.use([
     compression(),
