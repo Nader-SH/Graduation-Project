@@ -26,13 +26,15 @@ if (NODE_ENV === 'production') {
 }
 
 // Test the connection
-sequelize
-    .authenticate()
-    .then(() => {
+const testConnection = async () => {
+    try {
+        await sequelize.authenticate();
         console.log('Database connection has been established successfully.');
-    })
-    .catch((err) => {
-        console.error('Unable to connect to the database:', err);
-    });
+    } catch (error) {
+        console.error('Unable to connect to the database:', error);
+    }
+};
+
+testConnection();
 
 export default sequelize;
