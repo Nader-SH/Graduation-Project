@@ -2,6 +2,7 @@ import React from 'react';
 import { Form, Input, Button, Card, message, Select, InputNumber } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import axios from 'axios';
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -20,23 +21,18 @@ const RequestForm = () => {
 
       console.log(user); // Check if user is populated
 
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/requests`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(requestData),
-      });
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_URL}/requests`,
+        requestData  // axios will automatically stringify the data
+      );
 
-      if (response.ok) {
-        message.success('Request submitted successfully');
-        navigate('/request-success');
-      } else {
-        const errorData = await response.json();
-        message.error(`Failed to submit request: ${errorData.message}`);
-      }
+      message.success('Request submitted successfully');
+      navigate('/request-success');
+      
     } catch (error) {
-      message.error('Error submitting request');
+      // Better error handling with axios
+      const errorMessage = error.response?.data?.message || 'Error submitting request';
+      message.error(errorMessage);
       console.error('Error:', error);
     }
   };

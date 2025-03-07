@@ -2,6 +2,7 @@ import React from 'react';
 import { Form, Input, Button, Card, message, Select } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import axios from 'axios';
 
 const { Option } = Select;
 
@@ -12,24 +13,21 @@ const RegisterForm = () => {
 
   const onFinish = async (values) => {
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/auth/register`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(values),
-      });
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_URL}/auth/register`,
+        values  // axios will automatically stringify the values object
+      );
 
-      if (response.ok) {
-        const data = await response.json();
-        login(data.user); // Log in the user after registration
-        message.success('Registration successful');
-        navigate('/dashboard');
-      } else {
-        message.error('Registration failed');
-      }
+      // Axios automatically parses the JSON response
+      login(response.data.user); // Log in the user after registration
+      message.success('Registration successful');
+      navigate('/dashboard');
+      
     } catch (error) {
-      message.error('Registration failed: ' + error.message);
+      // Better error handling with axios
+      const errorMessage = error.response?.data?.message || 'Registration failed';
+      message.error(errorMessage);
+      console.error('Registration error:', error);
     }
   };
 

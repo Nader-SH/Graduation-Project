@@ -2,6 +2,7 @@ import React from 'react';
 import { Form, Input, Button, Card, message } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import axios from 'axios';
 
 const LoginForm = () => {
   const navigate = useNavigate();
@@ -10,24 +11,22 @@ const LoginForm = () => {
 
   const onFinish = async (values) => {
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/users/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email: values.email, password: values.password }),
-      });
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_URL}/users/login`,
+        { 
+          email: values.email, 
+          password: values.password 
+        }
+      );
 
-      if (response.ok) {
-        const data = await response.json();
-        login(data.user);
-        message.success('Login successful');
-        navigate('/dashboard');
-      } else {
-        message.error('Login failed');
-      }
+      login(response.data.user);
+      message.success('Login successful');
+      navigate('/dashboard');
+      
     } catch (error) {
-      message.error('Login failed: ' + error.message);
+      const errorMessage = error.response?.data?.message || 'Login failed';
+      message.error(errorMessage);
+      console.error('Login error:', error);
     }
   };
 

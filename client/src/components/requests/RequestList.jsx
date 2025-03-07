@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Table, Card, message, Tag } from 'antd';
 import './RequestList.css'; // Import the CSS file for additional styling
+import axios from 'axios';  // Add this import
 
 const RequestList = () => {
   const [requests, setRequests] = useState([]);
@@ -10,15 +11,14 @@ const RequestList = () => {
     const fetchRequests = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/requests`);
-        console.log('Response status:', response.status); // Log the response status
-        if (!response.ok) throw new Error('Failed to fetch requests');
-        const data = await response.json();
-        console.log('Fetched requests:', data); // Log the fetched data
-        setRequests(data);
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/requests`);
+        console.log('Response status:', response.status);
+        console.log('Fetched requests:', response.data);
+        setRequests(response.data);
       } catch (error) {
-        message.error(error.message);
-        console.error('Error fetching requests:', error); // Log the error
+        const errorMessage = error.response?.data?.message || 'Failed to fetch requests';
+        message.error(errorMessage);
+        console.error('Error fetching requests:', error);
       } finally {
         setLoading(false);
       }
