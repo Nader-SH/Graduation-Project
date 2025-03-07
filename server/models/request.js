@@ -33,14 +33,6 @@ Request.init({
         type: DataTypes.STRING,
         defaultValue: 'pending'
     },
-    assistanceTypeId: {
-        type: DataTypes.INTEGER,
-        allowNull: true,
-        references: {
-            model: 'assistanceTypes',
-            key: 'id'
-        }
-    },
     description: {
         type: DataTypes.TEXT,
         allowNull: true

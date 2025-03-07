@@ -10,9 +10,6 @@ import Chat from './chat.js';
 User.hasMany(Request, { foreignKey: 'userId' });
 Request.belongsTo(User, { foreignKey: 'userId' });
 
-AssistanceType.hasMany(Request, { foreignKey: 'assistanceTypeId' });
-Request.belongsTo(AssistanceType, { foreignKey: 'assistanceTypeId' });
-
 User.hasMany(Chat, { foreignKey: 'senderId' });
 Chat.belongsTo(User, { foreignKey: 'senderId' });
 
