@@ -10,7 +10,7 @@ const RequestList = () => {
     const fetchRequests = async () => {
       try {
         setLoading(true);
-        const response = await fetch('http://localhost:8000/api/requests');
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/requests`);
         console.log('Response status:', response.status); // Log the response status
         if (!response.ok) throw new Error('Failed to fetch requests');
         const data = await response.json();

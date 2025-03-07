@@ -20,7 +20,7 @@ const RequestForm = () => {
 
       console.log(user); // Check if user is populated
 
-      const response = await fetch(`http://localhost:8000/api/requests`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/requests`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

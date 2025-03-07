@@ -10,7 +10,7 @@ const LoginForm = () => {
 
   const onFinish = async (values) => {
     try {
-      const response = await fetch(`http://localhost:8000/api/users/login`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/users/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
