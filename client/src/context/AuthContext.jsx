@@ -1,76 +1,43 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { Navigate } from 'react-router-dom';
 
-const AuthContext = createContext(null);
+const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [user, setUser] = useState(null); // Initialize user state
 
-  // Check authentication status on mount and token change
   useEffect(() => {
-    const checkAuth = async () => {
-      const token = localStorage.getItem('token');
-      const storedUser = localStorage.getItem('user');
-
-      if (token && storedUser) {
-        // Set default authorization header for all requests
-        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-        setUser(JSON.parse(storedUser));
-      } else {
-        delete axios.defaults.headers.common['Authorization'];
-        setUser(null);
-      }
-      setLoading(false);
-    };
-
-    checkAuth();
+    // Check if the user is authenticated (e.g., check local storage or a cookie)
+    const token = localStorage.getItem('token'); // Example: using local storage
+    if (token) {
+      setIsAuthenticated(true);
+    }
   }, []);
 
-  const login = (userData, token) => {
-    localStorage.setItem('token', token);
-    localStorage.setItem('user', JSON.stringify(userData));
-    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-    setUser(userData);
+  const login = (userData) => {
+    // Perform login logic (e.g., API call)
+    // On success, set the token in local storage
+    localStorage.setItem('token', 'your_token_here'); // Replace with actual token
+    setIsAuthenticated(true);
+    setUser(userData); // Ensure userData contains the user ID
   };
 
   const logout = () => {
-    // Clear all items from localStorage
-    localStorage.clear(); // This will remove everything
-    // Or if you prefer to remove specific items:
-    // localStorage.removeItem('token');
-    // localStorage.removeItem('user');
-    
-    // Clear axios headers
-    delete axios.defaults.headers.common['Authorization'];
-    
-    // Clear user state
-    setUser(null);
-    
-    // Force navigate to login page and replace the history
-    navigate('/login', { replace: true });
-    
-    // Optional: Reload the page to ensure a clean state
-    window.location.reload();
+    // Perform logout logic
+    localStorage.removeItem('token'); // Remove token from local storage
+    setIsAuthenticated(false);
+    setUser(null); // Clear user data on logout
   };
 
-  if (loading) {
-    return <div>Loading...</div>; // Or your loading component
-  }
-
   return (
-    <AuthContext.Provider value={{ user, login, logout, loading }}>
+    <AuthContext.Provider value={{ isAuthenticated, user, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
 };
 
 export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
+  Navigate('/login');
+  return useContext(AuthContext);
 }; 
