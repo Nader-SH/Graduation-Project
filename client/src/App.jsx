@@ -22,7 +22,7 @@ const App = () => {
       <AuthProvider>
         <Layout>
           <HeaderComponent />
-          <Content style={{ padding: '0 50px', marginTop: 64, minHeight: 'calc(100vh - 64px)' }}>
+          <Content style={{ padding: '0 50px', marginTop: 15, minHeight: 'calc(100vh - 64px)' }}>
             <Routes>
               {/* Public Routes */}
               <Route path="/" element={<LandingPage />} />

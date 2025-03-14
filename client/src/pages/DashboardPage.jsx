@@ -1,6 +1,6 @@
-import React from 'react';
-import { LaptopOutlined, NotificationOutlined, UserOutlined } from '@ant-design/icons';
-import { Breadcrumb, Layout, Menu, theme } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { LaptopOutlined, NotificationOutlined, UserOutlined, MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons';
+import { Breadcrumb, Layout, Menu, theme, Button } from 'antd';
 const { Content, Sider } = Layout;
 
 const items2 = [UserOutlined, LaptopOutlined, NotificationOutlined].map((icon, index) => {
@@ -20,6 +20,21 @@ const items2 = [UserOutlined, LaptopOutlined, NotificationOutlined].map((icon, i
 });
 
 const DashboardPage = () => {
+    const [collapsed, setCollapsed] = useState(false);
+    const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+    useEffect(() => {
+        const handleResize = () => {
+            const mobile = window.innerWidth <= 768;
+            setIsMobile(mobile);
+            setCollapsed(mobile);
+        };
+
+        window.addEventListener('resize', handleResize);
+        handleResize(); // Initial check
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
     const {
         token: { colorBgContainer, borderRadiusLG },
     } = theme.useToken();
@@ -28,13 +43,42 @@ const DashboardPage = () => {
         <Layout
             style={{
                 borderRadius: borderRadiusLG,
+                minHeight: '100vh',
+                position: 'relative',
             }}
         >
+            {isMobile && (
+                <Button
+                    type="text"
+                    icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+                    onClick={() => setCollapsed(!collapsed)}
+                    style={{
+                        position: 'fixed',
+                        left: collapsed ? '20px' : '200px',
+                        top: '127px',
+                        zIndex: 1001,
+                        background: colorBgContainer,
+                        border: '1px solid #e8e8e8',
+                        borderRadius: '4px',
+                        transition: 'left 0.2s',
+                    }}
+                />
+            )}
             <Sider
                 width={200}
+                collapsible
+                collapsed={collapsed}
+                onCollapse={(value) => setCollapsed(value)}
+                breakpoint="lg"
                 style={{
                     background: colorBgContainer,
+                    position: isMobile ? 'fixed' : 'relative',
+                    height: '100vh',
+                    left: collapsed && isMobile ? '-200px' : 0,
+                    zIndex: 1000,
+                    transition: 'left 0.2s',
                 }}
+                trigger={null}
             >
                 <Menu
                     mode="inline"
@@ -50,6 +94,8 @@ const DashboardPage = () => {
             <Layout
                 style={{
                     padding: '0 24px 24px',
+                    marginLeft: isMobile ? 0 : (collapsed ? 80 : 200),
+                    transition: 'margin-left 0.2s',
                 }}
             >
                 <Breadcrumb
