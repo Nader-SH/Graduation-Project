@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 // eslint-disable-next-line no-unused-vars
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Layout } from 'antd';
 import HeaderComponent from './components/Layout/Header';
@@ -17,12 +17,29 @@ import { AuthProvider } from './context/AuthContext';
 const { Content } = Layout;
 
 const App = () => {
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   return (
     <Router>
       <AuthProvider>
         <Layout>
           <HeaderComponent />
-          <Content style={{ padding: '0 50px', marginTop: 15, minHeight: 'calc(100vh - 64px)' }}>
+          <Content 
+            style={{ 
+              padding: isMobile ? '0' : '0 50px', 
+              marginTop: 15, 
+              minHeight: 'calc(100vh - 64px)' 
+            }}
+          >
             <Routes>
               {/* Public Routes */}
               <Route path="/" element={<LandingPage />} />

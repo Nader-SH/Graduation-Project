@@ -33,26 +33,31 @@ const RequestList = () => {
       title: 'Applicant Name',
       dataIndex: 'applicantName',
       key: 'applicantName',
+      width: 150,
     },
     {
       title: 'Location',
       dataIndex: 'location',
       key: 'location',
+      width: 150,
     },
     {
       title: 'Family Members',
       dataIndex: 'familyMembersCount',
       key: 'familyMembersCount',
+      width: 120,
     },
     {
       title: 'Assistance Type',
       dataIndex: 'assistanceTypeId',
       key: 'assistanceTypeId',
+      width: 150,
     },
     {
       title: 'Status',
       dataIndex: 'status',
       key: 'status',
+      width: 120,
       render: (status) => {
         let color;
         switch (status) {
@@ -78,6 +83,7 @@ const RequestList = () => {
       title: 'Date Submitted',
       dataIndex: 'createdAt',
       key: 'createdAt',
+      width: 120,
       render: (date) => new Date(date).toLocaleDateString()
     }
   ];
@@ -89,14 +95,20 @@ const RequestList = () => {
   }));
 
   return (
-    <Card title="Assistance Requests" style={{ maxWidth: 1000, margin: '40px auto' }}>
-      <Table 
-        dataSource={dataSource} 
-        columns={columns} 
-        loading={loading}
-        pagination={{ pageSize: 10 }}
-        rowClassName={(record) => `status-${record.status}`}
-      />
+    <Card 
+      title="Assistance Requests" 
+      style={{ margin: '20px' }}
+    >
+      <div style={{ overflowX: 'auto' }}>
+        <Table 
+          dataSource={dataSource} 
+          columns={columns} 
+          loading={loading}
+          pagination={{ pageSize: 10 }}
+          rowClassName={(record) => `status-${record.status}`}
+          scroll={{ x: 'max-content' }}
+        />
+      </div>
     </Card>
   );
 };
