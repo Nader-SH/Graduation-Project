@@ -10,7 +10,6 @@ const LandingPage = () => {
         We aim to connect those in need with resources and help them navigate
         through challenging times.
       </p>
-      
       <h2>How We Help</h2>
       <ul>
         <li>Providing food and medical assistance</li>

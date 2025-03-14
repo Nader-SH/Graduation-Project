@@ -26,7 +26,6 @@ const RequestList = () => {
 
     fetchRequests();
   }, []);
-
   // Define columns for the table
   const columns = [
     {

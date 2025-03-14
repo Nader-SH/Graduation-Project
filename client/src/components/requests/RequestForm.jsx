@@ -23,9 +23,8 @@ const RequestForm = () => {
 
       const response = await axios.post(
         `${process.env.REACT_APP_API_URL}/requests`,
-        requestData  // axios will automatically stringify the data
+        requestData
       );
-
       message.success('Request submitted successfully');
       navigate('/request-success');
       
