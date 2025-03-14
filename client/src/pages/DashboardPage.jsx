@@ -29,16 +29,13 @@ const DashboardPage = () => {
             setIsMobile(mobile);
             setCollapsed(mobile);
         };
-
         window.addEventListener('resize', handleResize);
         handleResize(); // Initial check
         return () => window.removeEventListener('resize', handleResize);
     }, []);
-
     const {
         token: { colorBgContainer, borderRadiusLG },
     } = theme.useToken();
-
     return (
         <Layout
             style={{
