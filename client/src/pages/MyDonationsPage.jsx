@@ -35,7 +35,7 @@ const MyDonationsPage = () => {
     const fetchDonations = async () => {
         try {
             setLoading(true);
-            const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/donations/my-donations`);
+            const response = await axios.get(`${process.env.REACT_APP_API_URL}/donations/my-donations`);
             if (response.data.success) {
                 setDonations(response.data.data);
                 calculateStats(response.data.data);
@@ -65,7 +65,7 @@ const MyDonationsPage = () => {
 
     const handleCancelDonation = async (donationId) => {
         try {
-            const response = await axios.put(`${process.env.REACT_APP_API_URL}/api/donations/${donationId}/cancel`);
+            const response = await axios.put(`${process.env.REACT_APP_API_URL}/donations/${donationId}/cancel`);
             if (response.data.success) {
                 message.success('Donation cancelled successfully');
                 fetchDonations();

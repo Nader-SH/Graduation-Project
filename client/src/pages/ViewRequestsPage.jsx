@@ -29,7 +29,7 @@ const ViewRequestsPage = () => {
     const fetchRequests = async () => {
         try {
             setLoading(true);
-            const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/requests`);
+            const response = await axios.get(`${process.env.REACT_APP_API_URL}/requests`);
             if (response.data.success) {
                 setRequests(response.data.data);
             }
@@ -42,7 +42,7 @@ const ViewRequestsPage = () => {
 
     const handleStatusChange = async (requestId, newStatus) => {
         try {
-            const response = await axios.put(`${process.env.REACT_APP_API_URL}/api/requests/${requestId}/status`, {
+            const response = await axios.put(`${process.env.REACT_APP_API_URL}/requests/${requestId}/status`, {
                 status: newStatus
             });
             if (response.data.success) {

@@ -21,7 +21,7 @@ export const AuthProvider = ({ children }) => {
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
       // Make a request to verify the token and get user data
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/auth/me`);
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/auth/me`);
 
       if (response.data.success) {
         setUser({
@@ -112,7 +112,7 @@ export const AuthProvider = ({ children }) => {
   const logout = async () => {
     try {
       // Call logout endpoint if you have one
-      await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/logout`);
+      await axios.post(`${process.env.REACT_APP_API_URL}/auth/logout`);
     } catch (error) {
       console.error('Logout error:', error);
     } finally {

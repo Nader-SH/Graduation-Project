@@ -23,7 +23,7 @@ const RegisterForm = () => {
 
       // Updated to match your backend API endpoint
       const response = await axios.post(
-        `${process.env.REACT_APP_API_URL}/api/auth/register`,
+        `${process.env.REACT_APP_API_URL}/auth/register`,
         registrationData
       );
 

@@ -17,7 +17,7 @@ const ProfilePage = () => {
         try {
             setLoading(true);
             const response = await axios.put(
-                `${process.env.REACT_APP_API_URL}/api/users/profile`,
+                `${process.env.REACT_APP_API_URL}/users/profile`,
                 {
                     firstName: values.firstName,
                     lastName: values.lastName,
@@ -42,7 +42,7 @@ const ProfilePage = () => {
         try {
             setLoading(true);
             const response = await axios.put(
-                `${process.env.REACT_APP_API_URL}/api/users/change-password`,
+                `${process.env.REACT_APP_API_URL}/users/change-password`,
                 {
                     currentPassword: values.currentPassword,
                     newPassword: values.newPassword
@@ -136,7 +136,7 @@ const ProfilePage = () => {
                                     <Form.Item label="Profile Image">
                                         <Upload
                                             name="image"
-                                            action={`${process.env.REACT_APP_API_URL}/api/upload`}
+                                            action={`${process.env.REACT_APP_API_URL}/upload`}
                                             onChange={handleImageUpload}
                                             showUploadList={false}
                                         >
