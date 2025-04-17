@@ -7,14 +7,34 @@ import HeaderComponent from './components/Layout/Header';
 import Footer from './components/Layout/Footer';
 import LoginForm from './components/auth/LoginForm';
 import RegisterForm from './components/auth/RegisterForm';
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import ResetPasswordPage from './pages/ResetPasswordPage';
+import ProfilePage from './pages/ProfilePage';
 import RequestForm from './components/requests/RequestForm';
 import RequestList from './components/requests/RequestList';
 import RequestSuccess from './components/requests/RequestSuccess';
 import DashboardPage from './pages/DashboardPage';
 import LandingPage from './pages/LandingPage';
-import { AuthProvider } from './context/AuthContext';
+import ViewRequestsPage from './pages/ViewRequestsPage';
+import MyDonationsPage from './pages/MyDonationsPage';
+import { AuthProvider, useAuth } from './context/AuthContext';
 
 const { Content } = Layout;
+
+// Protected Route component
+const ProtectedRoute = ({ children }) => {
+  const { isAuthenticated, loading } = useAuth();
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" />;
+  }
+
+  return children;
+};
 
 const App = () => {
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
@@ -27,16 +47,17 @@ const App = () => {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
   return (
     <Router>
       <AuthProvider>
         <Layout>
           <HeaderComponent />
-          <Content 
-            style={{ 
-              padding: isMobile ? '0' : '0 50px', 
-              marginTop: 15, 
-              minHeight: 'calc(100vh - 64px)' 
+          <Content
+            style={{
+              padding: isMobile ? '0' : '0 50px',
+              marginTop: 15,
+              minHeight: 'calc(100vh - 64px)'
             }}
           >
             <Routes>
@@ -44,12 +65,37 @@ const App = () => {
               <Route path="/" element={<LandingPage />} />
               <Route path="/login" element={<LoginForm />} />
               <Route path="/register" element={<RegisterForm />} />
+              <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+              <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
               <Route path="/requests/new" element={<RequestForm />} />
               <Route path="/request-success" element={<RequestSuccess />} />
-              <Route path="/admin/requests" element={<RequestList />} />
 
               {/* Protected Routes */}
-              <Route path="/dashboard" element={<DashboardPage />} />
+              <Route path="/dashboard" element={
+                <ProtectedRoute>
+                  <DashboardPage />
+                </ProtectedRoute>
+              } />
+              <Route path="/profile" element={
+                <ProtectedRoute>
+                  <ProfilePage />
+                </ProtectedRoute>
+              } />
+              <Route path="/requests" element={
+                <ProtectedRoute>
+                  <ViewRequestsPage />
+                </ProtectedRoute>
+              } />
+              <Route path="/my-donations" element={
+                <ProtectedRoute>
+                  <MyDonationsPage />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin/requests" element={
+                <ProtectedRoute>
+                  <RequestList />
+                </ProtectedRoute>
+              } />
 
               {/* Catch all route */}
               <Route path="*" element={<Navigate to="/" replace />} />

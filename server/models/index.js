@@ -6,21 +6,33 @@ import Donor from './donor.js';
 import Donation from './donation.js';
 import Chat from './chat.js';
 
-// Define associations
-User.hasMany(Request, { foreignKey: 'userId' });
+// User - Request Relationship
+User.hasMany(Request, { foreignKey: 'userId', onDelete: 'CASCADE' });
 Request.belongsTo(User, { foreignKey: 'userId' });
 
-User.hasMany(Chat, { foreignKey: 'senderId' });
-Chat.belongsTo(User, { foreignKey: 'senderId' });
+// User - Chat Relationship (as sender)
+User.hasMany(Chat, { foreignKey: 'senderId', as: 'sentChats', onDelete: 'CASCADE' });
+Chat.belongsTo(User, { foreignKey: 'senderId', as: 'sender' });
 
-Donor.hasMany(Chat, { foreignKey: 'senderId' });
-Chat.belongsTo(Donor, { foreignKey: 'senderId' });
+// User - Chat Relationship (as receiver)
+User.hasMany(Chat, { foreignKey: 'receiveId', as: 'receivedChats', onDelete: 'CASCADE' });
+Chat.belongsTo(User, { foreignKey: 'receiveId', as: 'receiver' });
 
-Donor.hasMany(AssistanceType, { foreignKey: 'donorId' });
+// Donor - AssistanceType Relationship
+Donor.hasMany(AssistanceType, { foreignKey: 'donorId', onDelete: 'CASCADE' });
 AssistanceType.belongsTo(Donor, { foreignKey: 'donorId' });
 
-AssistanceType.hasMany(Donation, { foreignKey: 'assistanceTypeId' });
-Donation.belongsTo(AssistanceType, { foreignKey: 'assistanceTypeId' });
+// Donor - Donation Relationship
+Donor.hasMany(Donation, { foreignKey: 'donorId', onDelete: 'CASCADE' });
+Donation.belongsTo(Donor, { foreignKey: 'donorId' });
+
+// AssistanceType - Donation Relationship
+AssistanceType.hasMany(Donation, { foreignKey: 'assistanceId', onDelete: 'CASCADE' });
+Donation.belongsTo(AssistanceType, { foreignKey: 'assistanceId' });
+
+// Request - Donation Relationship
+Request.hasMany(Donation, { foreignKey: 'requestId', onDelete: 'CASCADE' });
+Donation.belongsTo(Request, { foreignKey: 'requestId' });
 
 // Sync models
 const syncModels = async () => {
@@ -34,4 +46,12 @@ const syncModels = async () => {
 
 syncModels();
 
-export { sequelize, User, Request, AssistanceType, Donor, Donation, Chat };
+export {
+    sequelize,
+    User,
+    Request,
+    AssistanceType,
+    Donor,
+    Donation,
+    Chat
+};

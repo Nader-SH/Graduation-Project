@@ -1,17 +1,26 @@
 import express from 'express';
-import { 
-  getAllRequests, 
-  getRequestById, 
-  createRequest, 
-  updateRequestStatus 
+import {
+  getAllRequests,
+  getRequestById,
+  createRequest,
+  updateRequest,
+  deleteRequest,
+  updateRequestStatus
 } from '../controllers/requestController.js';
+import { authenticateToken, isAdmin } from '../middlewares/auth.js';
 
 const router = express.Router();
 
-// Public routes (no auth required)
+// Public routes
 router.get('/', getAllRequests);
 router.get('/:id', getRequestById);
-router.post('/', createRequest);
-router.put('/:id/status', updateRequestStatus);
+
+// Protected routes
+router.post('/', authenticateToken, createRequest);
+
+// Admin routes
+router.put('/:id', authenticateToken, isAdmin, updateRequest);
+router.put('/:id/status', authenticateToken, isAdmin, updateRequestStatus);
+router.delete('/:id', authenticateToken, isAdmin, deleteRequest);
 
 export default router; 

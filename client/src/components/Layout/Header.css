@@ -1,0 +1,26 @@
+/* Header.css */
+.ant-menu-horizontal {
+  line-height: 64px;
+}
+
+.ant-menu-horizontal > .ant-menu-item,
+.ant-menu-horizontal > .ant-menu-submenu {
+  padding: 0 20px;
+}
+
+.ant-drawer-body .ant-menu-item {
+  padding-left: 24px !important;
+}
+
+.ant-drawer-body .ant-menu-submenu-title {
+  padding-left: 24px !important;
+}
+
+.ant-avatar {
+  cursor: pointer;
+  transition: transform 0.3s;
+}
+
+.ant-avatar:hover {
+  transform: scale(1.1);
+}
