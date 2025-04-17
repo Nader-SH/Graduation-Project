@@ -1,9 +1,22 @@
-import { Router } from "express";
-import { register, login } from '../controllers/userController.js';
+import express from 'express';
+import {
+    getAllUsers,
+    getUserById,
+    updateUser,
+    deleteUser,
+    getUserProfile
+} from '../controllers/userController.js';
+import { authenticateToken, isAdmin, isOwner } from '../middlewares/auth.js';
 
-const userRouter = Router();
+const router = express.Router();
 
-userRouter.post("/register", register);
-userRouter.post("/login", login);
+// Protected routes
+router.get('/profile', authenticateToken, getUserProfile);
+router.put('/:id', authenticateToken, isOwner, updateUser);
 
-export default userRouter;
+// Admin routes
+router.get('/', authenticateToken, isAdmin, getAllUsers);
+router.get('/:id', authenticateToken, isAdmin, getUserById);
+router.delete('/:id', authenticateToken, isAdmin, deleteUser);
+
+export default router;

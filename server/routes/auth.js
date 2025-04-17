@@ -1,9 +1,13 @@
 import express from 'express';
-import { registerUser } from '../controllers/authController.js';
+import { register, login, logout, getCurrentUser } from '../controllers/authController.js';
+import { authenticateToken, validateRequestBody } from '../middlewares/auth.js';
+import { registerSchema, loginSchema } from '../validation/userValidation.js';
 
 const router = express.Router();
 
-// Define the registration route
-router.post('/register', registerUser); // This should be correct
-
+// Auth routes
+router.post('/register', validateRequestBody(registerSchema), register);
+router.post('/login', validateRequestBody(loginSchema), login);
+router.post('/logout', logout);
+router.get('/me', authenticateToken, getCurrentUser);
 export default router; 

@@ -36,3 +36,126 @@
     transform: rotate(360deg);
   }
 }
+
+.register-container {
+  padding: 20px;
+  min-height: 100vh;
+  background-color: #f0f2f5;
+}
+
+.ant-card-head-title {
+  text-align: center;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.ant-form-item-label > label {
+  font-weight: 500;
+}
+
+/* Header Styles */
+.ant-layout-header {
+  height: 64px;
+  padding: 0 20px;
+  background: #fff;
+}
+
+.ant-menu-horizontal {
+  line-height: 62px;
+  border-bottom: none;
+}
+
+.ant-menu-horizontal > .ant-menu-item,
+.ant-menu-horizontal > .ant-menu-submenu {
+  border-bottom: 2px solid transparent;
+}
+
+.ant-menu-horizontal > .ant-menu-item:hover,
+.ant-menu-horizontal > .ant-menu-submenu:hover {
+  border-bottom: 2px solid #1890ff;
+  color: #1890ff;
+}
+
+.ant-menu-horizontal > .ant-menu-item-selected {
+  border-bottom: 2px solid #1890ff;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  padding-right: 24px;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  margin-right: 24px;
+}
+
+.user-info .ant-avatar {
+  margin-right: 8px;
+}
+
+@media (max-width: 768px) {
+  .ant-layout-header {
+    padding: 0 12px;
+  }
+}
+
+/* Menu Styles */
+.ant-menu-item {
+  padding: 0 20px;
+}
+
+/* Avatar Styles */
+.ant-avatar {
+  cursor: pointer;
+  transition: transform 0.3s;
+}
+
+.ant-avatar:hover {
+  transform: scale(1.05);
+}
+
+/* Mobile Drawer Styles */
+.ant-drawer-body {
+  padding: 0;
+}
+
+.ant-drawer-body .ant-menu {
+  border-right: none;
+}
+
+/* User Profile in Drawer */
+.mobile-user-profile {
+  padding: 16px;
+  text-align: center;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+/* src/styles/global.css */
+.forgot-password-container,
+.reset-password-container {
+  background-color: #f0f2f5;
+  min-height: calc(100vh - 64px - 70px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.ant-card-head-title {
+  text-align: center;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.ant-form-item-label > label {
+  font-weight: 500;
+}
+
+@media (max-width: 480px) {
+  .forgot-password-container,
+  .reset-password-container {
+    padding: 20px;
+  }
+}

@@ -1,9 +1,10 @@
-class CustomError extends Error {
-    constructor(status, message) {
-        super();
-        this.status = status || 500;
-        this.message = message || 'Internal server error !';
+export class CustomError extends Error {
+    constructor(statusCode, message) {
+        super(message);
+        this.statusCode = statusCode;
+        this.status = `${statusCode}`.startsWith('4') ? 'fail' : 'error';
+        this.isOperational = true;
+
+        Error.captureStackTrace(this, this.constructor);
     }
 }
-
-export default CustomError;
