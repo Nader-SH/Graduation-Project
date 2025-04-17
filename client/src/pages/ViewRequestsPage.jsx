@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Table, Card, Tag, Space, Button, Input, Select, message, Tooltip } from 'antd';
 import { SearchOutlined, FilterOutlined, HeartOutlined } from '@ant-design/icons';
 import axios from 'axios';
-import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
 const { Option } = Select;
@@ -12,7 +11,6 @@ const ViewRequestsPage = () => {
     const [loading, setLoading] = useState(false);
     const [searchText, setSearchText] = useState('');
     const [filterStatus, setFilterStatus] = useState('all');
-    const { user } = useAuth();
     const navigate = useNavigate();
 
     const statusColors = {
@@ -37,28 +35,6 @@ const ViewRequestsPage = () => {
             message.error('Failed to fetch requests');
         } finally {
             setLoading(false);
-        }
-    };
-
-    const handleStatusChange = async (requestId, newStatus) => {
-        try {
-            const response = await axios.put(`${process.env.REACT_APP_API_URL}/requests/${requestId}/status`, {
-                status: newStatus
-            });
-            if (response.data.success) {
-                message.success('Request status updated successfully');
-                fetchRequests(); // Refresh the table
-            }
-        } catch (error) {
-            message.error('Failed to update request status');
-        }
-    };
-
-    const handleDonate = async (requestId) => {
-        try {
-            navigate(`/donate/${requestId}`);
-        } catch (error) {
-            message.error('Failed to process donation');
         }
     };
 
@@ -136,7 +112,7 @@ const ViewRequestsPage = () => {
                     <Button
                         type="primary"
                         icon={<HeartOutlined />}
-                        onClick={() => handleDonate(record._id)}
+                        onClick={() => console.log(record)}
                         disabled={record.status !== 'approved'}
                     >
                         Donate

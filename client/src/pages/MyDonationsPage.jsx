@@ -18,7 +18,6 @@ const MyDonationsPage = () => {
         pendingDonations: 0,
         completedDonations: 0
     });
-    const { user } = useAuth();
     const navigate = useNavigate();
 
     const statusColors = {
