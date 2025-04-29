@@ -1,31 +1,150 @@
-import React, { useEffect, useState } from 'react';
-import { Table, Card, message, Tag } from 'antd';
-import './RequestList.css'; // Import the CSS file for additional styling
-import axios from 'axios';  // Add this import
+import React, { useState } from 'react';
+import { Table, Card, Tag } from 'antd';
+import './RequestList.css';
+
+// Mock data for requests
+const mockRequests = [
+  {
+    id: '1',
+    applicantName: 'Mohammad Ali',
+    location: 'Beirut, Lebanon',
+    familyMembersCount: 4,
+    assistanceTypeId: 'Medical Aid',
+    status: 'pending',
+    createdAt: '2024-02-15T10:00:00Z'
+  },
+  {
+    id: '2',
+    applicantName: 'Fatima Hassan',
+    location: 'Tripoli, Lebanon',
+    familyMembersCount: 6,
+    assistanceTypeId: 'Food Assistance',
+    status: 'approved',
+    createdAt: '2024-02-14T15:30:00Z'
+  },
+  {
+    id: '3',
+    applicantName: 'Ahmed Khalil',
+    location: 'Sidon, Lebanon',
+    familyMembersCount: 3,
+    assistanceTypeId: 'Shelter Support',
+    status: 'rejected',
+    createdAt: '2024-02-13T09:15:00Z'
+  },
+  {
+    id: '4',
+    applicantName: 'Layla Ibrahim',
+    location: 'Tyre, Lebanon',
+    familyMembersCount: 5,
+    assistanceTypeId: 'Financial Support',
+    status: 'completed',
+    createdAt: '2024-02-12T14:20:00Z'
+  },
+  {
+    id: '5',
+    applicantName: 'Youssef Mahmoud',
+    location: 'Beirut, Lebanon',
+    familyMembersCount: 2,
+    assistanceTypeId: 'Medical Aid',
+    status: 'pending',
+    createdAt: '2024-02-11T11:45:00Z'
+  },
+  {
+    id: '6',
+    applicantName: 'Nour Abed',
+    location: 'Zahle, Lebanon',
+    familyMembersCount: 7,
+    assistanceTypeId: 'Food Assistance',
+    status: 'approved',
+    createdAt: '2024-02-10T16:30:00Z'
+  },
+  {
+    id: '7',
+    applicantName: 'Rami Fares',
+    location: 'Baalbek, Lebanon',
+    familyMembersCount: 4,
+    assistanceTypeId: 'Shelter Support',
+    status: 'pending',
+    createdAt: '2024-02-09T13:10:00Z'
+  },
+  {
+    id: '8',
+    applicantName: 'Maya Haddad',
+    location: 'Jounieh, Lebanon',
+    familyMembersCount: 3,
+    assistanceTypeId: 'Financial Support',
+    status: 'completed',
+    createdAt: '2024-02-08T10:25:00Z'
+  },
+  {
+    id: '9',
+    applicantName: 'Karim Mansour',
+    location: 'Beirut, Lebanon',
+    familyMembersCount: 5,
+    assistanceTypeId: 'Medical Aid',
+    status: 'rejected',
+    createdAt: '2024-02-07T08:15:00Z'
+  },
+  {
+    id: '10',
+    applicantName: 'Sara Nasser',
+    location: 'Tripoli, Lebanon',
+    familyMembersCount: 4,
+    assistanceTypeId: 'Food Assistance',
+    status: 'pending',
+    createdAt: '2024-02-06T14:40:00Z'
+  },
+  {
+    id: '11',
+    applicantName: 'Omar Zein',
+    location: 'Sidon, Lebanon',
+    familyMembersCount: 6,
+    assistanceTypeId: 'Shelter Support',
+    status: 'approved',
+    createdAt: '2024-02-05T09:20:00Z'
+  },
+  {
+    id: '12',
+    applicantName: 'Hala Farah',
+    location: 'Tyre, Lebanon',
+    familyMembersCount: 3,
+    assistanceTypeId: 'Financial Support',
+    status: 'completed',
+    createdAt: '2024-02-04T16:45:00Z'
+  },
+  {
+    id: '13',
+    applicantName: 'Bassam Saleh',
+    location: 'Beirut, Lebanon',
+    familyMembersCount: 4,
+    assistanceTypeId: 'Medical Aid',
+    status: 'pending',
+    createdAt: '2024-02-03T11:30:00Z'
+  },
+  {
+    id: '14',
+    applicantName: 'Rana Khoury',
+    location: 'Zahle, Lebanon',
+    familyMembersCount: 5,
+    assistanceTypeId: 'Food Assistance',
+    status: 'rejected',
+    createdAt: '2024-02-02T14:15:00Z'
+  },
+  {
+    id: '15',
+    applicantName: 'Tarek Malek',
+    location: 'Baalbek, Lebanon',
+    familyMembersCount: 7,
+    assistanceTypeId: 'Shelter Support',
+    status: 'approved',
+    createdAt: '2024-02-01T10:50:00Z'
+  }
+];
 
 const RequestList = () => {
-  const [requests, setRequests] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [requests, setRequests] = useState(mockRequests);
+  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    const fetchRequests = async () => {
-      try {
-        setLoading(true);
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/requests`);
-        console.log('Response status:', response.status);
-        console.log('Fetched requests:', response.data);
-        setRequests(response.data);
-      } catch (error) {
-        const errorMessage = error.response?.data?.message || 'Failed to fetch requests';
-        message.error(errorMessage);
-        console.error('Error fetching requests:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchRequests();
-  }, []);
   // Define columns for the table
   const columns = [
     {

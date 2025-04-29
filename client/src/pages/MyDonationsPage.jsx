@@ -1,24 +1,184 @@
-import React, { useState, useEffect } from 'react';
-import { Table, Card, Tag, Space, Button, Input, Select, message, Row, Col, Statistic } from 'antd';
+import React, { useState } from 'react';
+import { Table, Card, Tag, Space, Button, Input, Select, Row, Col, Statistic } from 'antd';
 import { SearchOutlined, FilterOutlined, DollarOutlined, HeartOutlined } from '@ant-design/icons';
-import axios from 'axios';
-import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
 const { Option } = Select;
 
+// Mock data for donations
+const mockDonations = [
+  {
+    _id: '1',
+    requestId: '1',
+    requestTitle: 'Medical Treatment for Child',
+    amount: 500,
+    status: 'completed',
+    createdAt: '2024-02-15T10:00:00Z'
+  },
+  {
+    _id: '2',
+    requestId: '2',
+    requestTitle: 'School Supplies for Orphanage',
+    amount: 300,
+    status: 'pending',
+    createdAt: '2024-02-14T15:30:00Z'
+  },
+  {
+    _id: '3',
+    requestId: '3',
+    requestTitle: 'Emergency Food Supplies',
+    amount: 200,
+    status: 'approved',
+    createdAt: '2024-02-13T09:15:00Z'
+  },
+  {
+    _id: '4',
+    requestId: '4',
+    requestTitle: 'Rent Assistance',
+    amount: 1000,
+    status: 'completed',
+    createdAt: '2024-02-12T14:20:00Z'
+  },
+  {
+    _id: '5',
+    requestId: '5',
+    requestTitle: 'Medical Equipment',
+    amount: 750,
+    status: 'cancelled',
+    createdAt: '2024-02-11T11:45:00Z'
+  },
+  {
+    _id: '6',
+    requestId: '6',
+    requestTitle: 'Educational Support',
+    amount: 400,
+    status: 'pending',
+    createdAt: '2024-02-10T16:30:00Z'
+  },
+  {
+    _id: '7',
+    requestId: '7',
+    requestTitle: 'Home Repair',
+    amount: 1200,
+    status: 'completed',
+    createdAt: '2024-02-09T13:10:00Z'
+  },
+  {
+    _id: '8',
+    requestId: '8',
+    requestTitle: 'Small Business Support',
+    amount: 1500,
+    status: 'approved',
+    createdAt: '2024-02-08T10:25:00Z'
+  },
+  {
+    _id: '9',
+    requestId: '9',
+    requestTitle: 'Emergency Shelter',
+    amount: 800,
+    status: 'completed',
+    createdAt: '2024-02-07T08:15:00Z'
+  },
+  {
+    _id: '10',
+    requestId: '10',
+    requestTitle: 'Medical Supplies',
+    amount: 600,
+    status: 'pending',
+    createdAt: '2024-02-06T14:40:00Z'
+  },
+  {
+    _id: '11',
+    requestId: '11',
+    requestTitle: 'Scholarship Fund',
+    amount: 2500,
+    status: 'approved',
+    createdAt: '2024-02-05T09:20:00Z'
+  },
+  {
+    _id: '12',
+    requestId: '12',
+    requestTitle: 'Community Kitchen',
+    amount: 1800,
+    status: 'completed',
+    createdAt: '2024-02-04T16:45:00Z'
+  },
+  {
+    _id: '13',
+    requestId: '13',
+    requestTitle: 'Special Education',
+    amount: 900,
+    status: 'pending',
+    createdAt: '2024-02-03T11:30:00Z'
+  },
+  {
+    _id: '14',
+    requestId: '14',
+    requestTitle: 'Emergency Surgery',
+    amount: 3500,
+    status: 'approved',
+    createdAt: '2024-02-02T14:15:00Z'
+  },
+  {
+    _id: '15',
+    requestId: '15',
+    requestTitle: 'Debt Relief',
+    amount: 2000,
+    status: 'completed',
+    createdAt: '2024-02-01T10:50:00Z'
+  },
+  {
+    _id: '16',
+    requestId: '16',
+    requestTitle: 'Youth Program',
+    amount: 1200,
+    status: 'cancelled',
+    createdAt: '2024-01-31T13:25:00Z'
+  },
+  {
+    _id: '17',
+    requestId: '17',
+    requestTitle: 'Elderly Care',
+    amount: 1500,
+    status: 'pending',
+    createdAt: '2024-01-30T09:40:00Z'
+  },
+  {
+    _id: '18',
+    requestId: '18',
+    requestTitle: 'Disaster Relief',
+    amount: 3000,
+    status: 'approved',
+    createdAt: '2024-01-29T15:20:00Z'
+  },
+  {
+    _id: '19',
+    requestId: '19',
+    requestTitle: 'Mental Health Support',
+    amount: 800,
+    status: 'completed',
+    createdAt: '2024-01-28T11:15:00Z'
+  },
+  {
+    _id: '20',
+    requestId: '20',
+    requestTitle: 'Clean Water Project',
+    amount: 2200,
+    status: 'approved',
+    createdAt: '2024-01-27T14:30:00Z'
+  }
+];
+
 const MyDonationsPage = () => {
-    const [donations, setDonations] = useState([]);
-    const [loading, setLoading] = useState(false);
+    const [donations, setDonations] = useState(mockDonations);
     const [searchText, setSearchText] = useState('');
     const [filterStatus, setFilterStatus] = useState('all');
     const [stats, setStats] = useState({
-        totalAmount: 0,
-        totalDonations: 0,
-        pendingDonations: 0,
-        completedDonations: 0
+        totalAmount: 27550,
+        totalDonations: 20,
+        pendingDonations: 5,
+        completedDonations: 7
     });
-    const { user } = useAuth();
     const navigate = useNavigate();
 
     const statusColors = {
@@ -28,51 +188,20 @@ const MyDonationsPage = () => {
         cancelled: 'red'
     };
 
-    useEffect(() => {
-        fetchDonations();
-    }, []);
-
-    const fetchDonations = async () => {
-        try {
-            setLoading(true);
-            const response = await axios.get(`${process.env.REACT_APP_API_URL}/donations/my-donations`);
-            if (response.data.success) {
-                setDonations(response.data.data);
-                calculateStats(response.data.data);
-            }
-        } catch (error) {
-            message.error('Failed to fetch donations');
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const calculateStats = (donationData) => {
-        const stats = donationData.reduce((acc, donation) => {
-            acc.totalAmount += donation.amount;
-            acc.totalDonations += 1;
-            if (donation.status === 'pending') acc.pendingDonations += 1;
-            if (donation.status === 'completed') acc.completedDonations += 1;
-            return acc;
-        }, {
-            totalAmount: 0,
-            totalDonations: 0,
-            pendingDonations: 0,
-            completedDonations: 0
-        });
-        setStats(stats);
-    };
-
-    const handleCancelDonation = async (donationId) => {
-        try {
-            const response = await axios.put(`${process.env.REACT_APP_API_URL}/donations/${donationId}/cancel`);
-            if (response.data.success) {
-                message.success('Donation cancelled successfully');
-                fetchDonations();
-            }
-        } catch (error) {
-            message.error('Failed to cancel donation');
-        }
+    const handleCancelDonation = (donationId) => {
+        setDonations(donations.map(donation => 
+            donation._id === donationId 
+                ? { ...donation, status: 'cancelled' }
+                : donation
+        ));
+        // Update stats after cancellation
+        const updatedStats = {
+            totalAmount: stats.totalAmount,
+            totalDonations: stats.totalDonations,
+            pendingDonations: stats.pendingDonations - 1,
+            completedDonations: stats.completedDonations
+        };
+        setStats(updatedStats);
     };
 
     const columns = [
@@ -207,7 +336,6 @@ const MyDonationsPage = () => {
                 <Table
                     columns={columns}
                     dataSource={filteredDonations}
-                    loading={loading}
                     rowKey="_id"
                     pagination={{
                         pageSize: 10,
