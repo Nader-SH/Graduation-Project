@@ -16,7 +16,7 @@ router.get('/', getAllRequests);
 router.get('/:id', getRequestById);
 
 // Protected routes
-router.post('/', authenticateToken, createRequest);
+router.post('/', createRequest);
 
 // Admin routes
 router.put('/:id', authenticateToken, isAdmin, updateRequest);

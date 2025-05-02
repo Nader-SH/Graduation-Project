@@ -1,5 +1,5 @@
 import { Model, DataTypes } from 'sequelize';
-import sequelize from '../database/config/connection.js';
+import sequelize from '../config/database.js';
 
 class Donor extends Model {}
 
@@ -10,7 +10,7 @@ Donor.init(
         email: { type: DataTypes.STRING, allowNull: false },
         phone: { type: DataTypes.STRING, allowNull: false },
     },
-    { sequelize, modelName: 'donor' }
+    { sequelize, modelName: 'Donor', tableName: 'donors' }
 );
 
 export default Donor;

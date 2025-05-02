@@ -200,26 +200,67 @@ Common HTTP Status Codes:
 git clone https://github.com/your-username/Graduation-Project.git
 ```
 
-2. Install dependencies
+2. Install backend dependencies
 ```bash
-cd Graduation-Project
+cd Graduation-Project/server
 npm install
 ```
 
-3. Set up environment variables
+3. Install frontend dependencies
+```bash
+cd ../client
+npm install
+```
+
+4. Set up environment variables
 ```bash
 cp .env.example .env
 ```
 
-4. Start the development server
+5. Start the backend development server
 ```bash
 npm run dev
 ```
 
+6. Start the frontend development server
+```bash
+npm start
+```
+
 ### Technologies Used
 
-- Node.js
-- Express.js
-- MongoDB
-- JWT for authentication
-- bcrypt for password hashing
+#### Backend
+- **Node.js**
+- **Express.js** (web framework)
+- **Sequelize** (ORM)
+- **PostgreSQL** (database)
+- **pg** (PostgreSQL client for Node.js)
+- **bcrypt** and **bcryptjs** (password hashing)
+- **cors** (Cross-Origin Resource Sharing)
+- **dotenv** (environment variable management)
+- **joi** (input validation)
+- **jsonwebtoken** (JWT authentication)
+- **cookie-parser** (cookie handling)
+- **compression** (response compression)
+- **nodemon** (development server auto-reload)
+- **http-errors** (error handling)
+- **pg-hstore** (PostgreSQL hstore support)
+
+#### Frontend
+- **React 19** (core UI library)
+- **react-dom 19** (DOM bindings for React)
+- **react-router-dom 7** (routing)
+- **Ant Design 5** (UI component library)
+- **Axios** (HTTP client)
+- **react-icons 5** (icon library)
+- **react-scripts** (Create React App scripts)
+- **web-vitals** (performance measurement)
+- **@testing-library/react** (React component testing)
+- **@testing-library/jest-dom** (custom Jest matchers for DOM nodes)
+- **@testing-library/user-event** (user event simulation for tests)
+- **@testing-library/dom** (DOM testing utilities)
+- **Create React App** (for bootstrapping the frontend project)
+
+---
+
+For any questions or issues, please open an issue on the repository or contact the maintainers.

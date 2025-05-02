@@ -224,20 +224,6 @@ const RegisterForm = () => {
             </Select>
           </Form.Item>
 
-          <Form.Item
-            name="image"
-            label="Profile Image URL"
-            rules={[
-              { required: true, message: 'Please enter your profile image URL' },
-              { type: 'url', message: 'Please enter a valid URL' }
-            ]}
-          >
-            <Input
-              placeholder="Enter your profile image URL"
-              size="large"
-            />
-          </Form.Item>
-
           <Form.Item>
             <Button
               type="primary"

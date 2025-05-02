@@ -13,20 +13,13 @@ export const getAllRequests = async (req, res) => {
         {
           model: User,
           attributes: ['id', 'firstName', 'lastName', 'email']
-        },
-        {
-          model: Donation,
-          attributes: ['id', 'donationType', 'amount', 'donationDate']
         }
       ],
       order: [['createdAt', 'DESC']]
     });
 
-    res.status(200).json({
-      success: true,
-      count: requests.length,
-      data: requests
-    });
+    // Return only the array
+    res.status(200).json(requests);
   } catch (error) {
     console.error('Error in getAllRequests:', error);
     res.status(500).json({
@@ -47,10 +40,6 @@ export const getRequestById = async (req, res) => {
         {
           model: User,
           attributes: ['id', 'firstName', 'lastName', 'email']
-        },
-        {
-          model: Donation,
-          attributes: ['id', 'donationType', 'amount', 'donationDate']
         }
       ]
     });

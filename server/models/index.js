@@ -30,9 +30,7 @@ Donation.belongsTo(Donor, { foreignKey: 'donorId' });
 AssistanceType.hasMany(Donation, { foreignKey: 'assistanceId', onDelete: 'CASCADE' });
 Donation.belongsTo(AssistanceType, { foreignKey: 'assistanceId' });
 
-// Request - Donation Relationship
-Request.hasMany(Donation, { foreignKey: 'requestId', onDelete: 'CASCADE' });
-Donation.belongsTo(Request, { foreignKey: 'requestId' });
+// Removed Request - Donation Relationship
 
 // Sync models
 const syncModels = async () => {

@@ -1,154 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Table, Card, Tag, Space, Button, Input, Select, Tooltip } from 'antd';
 import { SearchOutlined, FilterOutlined, HeartOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const { Option } = Select;
 
-// Mock data for requests
-const mockRequests = [
-  {
-    _id: '1',
-    title: 'Medical Treatment for Child',
-    description: 'Urgent medical treatment needed for a 5-year-old child with chronic illness',
-    amountNeeded: 5000,
-    assistanceType: 'medical',
-    status: 'pending',
-    createdAt: '2024-02-15T10:00:00Z'
-  },
-  {
-    _id: '2',
-    title: 'School Supplies for Orphanage',
-    description: 'Basic school supplies needed for 30 children in local orphanage',
-    amountNeeded: 1500,
-    assistanceType: 'educational',
-    status: 'approved',
-    createdAt: '2024-02-14T15:30:00Z'
-  },
-  {
-    _id: '3',
-    title: 'Emergency Food Supplies',
-    description: 'Food packages for 10 families affected by recent floods',
-    amountNeeded: 2000,
-    assistanceType: 'other',
-    status: 'completed',
-    createdAt: '2024-02-13T09:15:00Z'
-  },
-  {
-    _id: '4',
-    title: 'Rent Assistance',
-    description: 'Help needed for family facing eviction due to job loss',
-    amountNeeded: 3000,
-    assistanceType: 'financial',
-    status: 'approved',
-    createdAt: '2024-02-12T14:20:00Z'
-  },
-  {
-    _id: '5',
-    title: 'Medical Equipment',
-    description: 'Wheelchair and medical supplies for elderly patient',
-    amountNeeded: 2500,
-    assistanceType: 'medical',
-    status: 'rejected',
-    createdAt: '2024-02-11T11:45:00Z'
-  },
-  {
-    _id: '6',
-    title: 'Educational Support',
-    description: 'Tuition fees for university student from low-income family',
-    amountNeeded: 4000,
-    assistanceType: 'educational',
-    status: 'pending',
-    createdAt: '2024-02-10T16:30:00Z'
-  },
-  {
-    _id: '7',
-    title: 'Home Repair',
-    description: 'Emergency repairs needed for family home after storm damage',
-    amountNeeded: 3500,
-    assistanceType: 'other',
-    status: 'approved',
-    createdAt: '2024-02-09T13:10:00Z'
-  },
-  {
-    _id: '8',
-    title: 'Small Business Support',
-    description: 'Startup capital for single mother starting small business',
-    amountNeeded: 6000,
-    assistanceType: 'financial',
-    status: 'pending',
-    createdAt: '2024-02-08T10:25:00Z'
-  },
-  {
-    _id: '9',
-    title: 'Emergency Shelter',
-    description: 'Temporary housing for family displaced by fire',
-    amountNeeded: 4500,
-    assistanceType: 'other',
-    status: 'approved',
-    createdAt: '2024-02-07T08:15:00Z'
-  },
-  {
-    _id: '10',
-    title: 'Medical Supplies',
-    description: 'Essential medications for community health center',
-    amountNeeded: 2800,
-    assistanceType: 'medical',
-    status: 'completed',
-    createdAt: '2024-02-06T14:40:00Z'
-  },
-  {
-    _id: '11',
-    title: 'Scholarship Fund',
-    description: 'Support for underprivileged students in STEM fields',
-    amountNeeded: 7500,
-    assistanceType: 'educational',
-    status: 'approved',
-    createdAt: '2024-02-05T11:20:00Z'
-  },
-  {
-    _id: '12',
-    title: 'Debt Relief',
-    description: 'Help with medical debt for cancer patient',
-    amountNeeded: 12000,
-    assistanceType: 'financial',
-    status: 'pending',
-    createdAt: '2024-02-04T09:30:00Z'
-  },
-  {
-    _id: '13',
-    title: 'Community Kitchen',
-    description: 'Equipment and supplies for free community meals program',
-    amountNeeded: 3200,
-    assistanceType: 'other',
-    status: 'rejected',
-    createdAt: '2024-02-03T16:45:00Z'
-  },
-  {
-    _id: '14',
-    title: 'Special Education',
-    description: 'Resources for children with special needs',
-    amountNeeded: 5500,
-    assistanceType: 'educational',
-    status: 'approved',
-    createdAt: '2024-02-02T13:15:00Z'
-  },
-  {
-    _id: '15',
-    title: 'Emergency Surgery',
-    description: 'Life-saving surgery for uninsured patient',
-    amountNeeded: 15000,
-    assistanceType: 'medical',
-    status: 'completed',
-    createdAt: '2024-02-01T10:50:00Z'
-  }
-];
-
 const ViewRequestsPage = () => {
-    const [requests, setRequests] = useState(mockRequests);
+    const [requests, setRequests] = useState([]);
     const [searchText, setSearchText] = useState('');
     const [filterStatus, setFilterStatus] = useState('all');
     const navigate = useNavigate();
+
+    useEffect(() => {
+      const fetchRequests = async () => {
+        try {
+          const response = await axios.get(`${process.env.REACT_APP_API_URL}/requests`);
+          setRequests(response.data); // or response.data.data if your API wraps the array
+          console.log('Fetched requests:', response.data);
+        } catch (error) {
+          console.error('Error fetching requests:', error);
+        }
+      };
+      fetchRequests();
+    }, []);
 
     const statusColors = {
         pending: 'gold',
@@ -172,12 +47,12 @@ const ViewRequestsPage = () => {
     });
 
     const columns = [
-        {
-            title: 'Title',
-            dataIndex: 'title',
-            key: 'title',
-            sorter: (a, b) => a.title.localeCompare(b.title),
-        },
+        // {
+        //     title: 'Title',
+        //     dataIndex: 'title',
+        //     key: 'title',
+        //     sorter: (a, b) => (a.title || '').localeCompare(b.title || ''),
+        // },
         {
             title: 'Description',
             dataIndex: 'description',
@@ -195,8 +70,11 @@ const ViewRequestsPage = () => {
             title: 'Amount Needed',
             dataIndex: 'amountNeeded',
             key: 'amountNeeded',
-            render: (amount) => `$${amount.toFixed(2)}`,
-            sorter: (a, b) => a.amountNeeded - b.amountNeeded,
+            render: (amount) =>
+                amount !== undefined && amount !== null
+                    ? `$${Number(amount).toFixed(2)}`
+                    : <span style={{ color: '#aaa' }}>N/A</span>,
+            sorter: (a, b) => (a.amountNeeded || 0) - (b.amountNeeded || 0),
         },
         {
             title: 'Type',
