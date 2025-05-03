@@ -93,15 +93,15 @@ const RequestForm = () => {
         </Form.Item>
 
         <Form.Item
-          name="assistanceTypeId"
+          name="assistanceType"
           label="Type of Assistance Needed"
           rules={[{ required: true, message: 'Please select assistance type' }]}
         >
           <Select placeholder="Select assistance type">
-            <Option value="1">Food</Option>
-            <Option value="2">Medical</Option>
-            <Option value="3">Educational</Option>
-            <Option value="4">Financial</Option>
+            <Option value="Food">Food</Option>
+            <Option value="Medical">Medical</Option>
+            <Option value="Educational">Educational</Option>
+            <Option value="Financial">Financial</Option>
           </Select>
         </Form.Item>
 

@@ -74,7 +74,8 @@ export const createRequest = async (req, res) => {
       familyMembersCount,
       headOfFamilyStatus,
       location,
-      description
+      description,
+      assistanceType
     } = req.body;
 
     // Check if user already has a pending request
@@ -99,8 +100,8 @@ export const createRequest = async (req, res) => {
       headOfFamilyStatus,
       location,
       description,
-      status: 'pending',
-      userId: req.user.id
+      assistanceType,
+      status: 'pending'
     });
 
     res.status(201).json({

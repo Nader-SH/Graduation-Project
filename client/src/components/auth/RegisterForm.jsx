@@ -113,7 +113,7 @@ const RegisterForm = () => {
       <Card
         title="Register"
         style={{
-          maxWidth: 400,
+          maxWidth: 600,
           margin: '40px auto',
           boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
         }}

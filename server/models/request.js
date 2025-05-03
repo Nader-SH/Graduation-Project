@@ -29,6 +29,10 @@ Request.init({
         type: DataTypes.STRING,
         allowNull: false
     },
+    assistanceType: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
     status: {
         type: DataTypes.STRING,
         defaultValue: 'pending'

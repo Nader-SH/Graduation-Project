@@ -67,14 +67,14 @@ const ViewRequestsPage = () => {
             ),
         },
         {
-            title: 'Amount Needed',
-            dataIndex: 'amountNeeded',
-            key: 'amountNeeded',
-            render: (amount) =>
-                amount !== undefined && amount !== null
-                    ? `$${Number(amount).toFixed(2)}`
-                    : <span style={{ color: '#aaa' }}>N/A</span>,
-            sorter: (a, b) => (a.amountNeeded || 0) - (b.amountNeeded || 0),
+            title: 'Head of Family Status',
+            dataIndex: 'headOfFamilyStatus',
+            key: 'headOfFamilyStatus',
+            render: (status) => (
+                <span style={{ fontWeight: 'bold'  }}>
+                    {status}
+                </span>
+            ),
         },
         {
             title: 'Type',
