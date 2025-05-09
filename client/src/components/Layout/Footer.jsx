@@ -3,7 +3,7 @@ import { Image, Layout } from 'antd';
 import { Link } from 'react-router-dom';
 import { FaFacebook, FaInstagram, FaLinkedinIn, FaTwitter } from 'react-icons/fa';
 import { HiMail, HiPhone } from 'react-icons/hi';
-
+import logoIcon from '../../assets/LogoImdad/icon.svg';
 const Footer = () => {
   return (
       <footer className="footer">
@@ -11,7 +11,7 @@ const Footer = () => {
           <div className="footer-grid">
             <div className="footer-column">
               <Link to="/" className="footer-logo">
-                <Image src="/logo.svg" alt="Imdad Logo" width={120} height={36} />
+                <Image src={logoIcon} alt="Imdad Logo" width={120} height={36} />
               </Link>
               <p className="footer-description">
                 Connecting those in need with those who can help. Making charitable giving simple, transparent, and

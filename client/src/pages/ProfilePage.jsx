@@ -11,7 +11,9 @@ const ProfilePage = () => {
     const [form] = Form.useForm();
     const [loading, setLoading] = useState(false);
     const [imageUrl, setImageUrl] = useState(user?.image);
-
+    console.log("user", user);
+    console.log("login", login);
+    
     // Handle profile update
     const handleProfileUpdate = async (values) => {
         try {

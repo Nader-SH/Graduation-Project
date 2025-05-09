@@ -5,21 +5,18 @@ import {
     getDonationById, 
     createDonation, 
     updateDonation, 
-    deleteDonation 
+    deleteDonation,
+    getDonationsSummary
 } from '../controllers/donationController.js';
-import { authenticateToken, isAdmin } from '../middlewares/auth.js';
 
 const router = express.Router();
 
-// Public routes
+// All routes
 router.get('/', getAllDonations);
+router.get('/summary', getDonationsSummary);
 router.get('/:id', getDonationById);
-
-// Protected routes
-router.post('/', authenticateToken, createDonation);
-
-// Admin routes
-router.put('/:id', authenticateToken, isAdmin, updateDonation);
-router.delete('/:id', authenticateToken, isAdmin, deleteDonation);
+router.post('/', createDonation);
+router.put('/:id', updateDonation);
+router.delete('/:id', deleteDonation);
 
 export default router;

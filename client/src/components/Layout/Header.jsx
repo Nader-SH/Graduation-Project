@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Layout, Menu, Button, Drawer } from 'antd';
-import { MenuOutlined } from '@ant-design/icons';
+import { Layout, Menu, Button, Drawer, Space } from 'antd';
+import { MenuOutlined, HeartOutlined, UserOutlined, FormOutlined, LoginOutlined, UserAddOutlined, LogoutOutlined } from '@ant-design/icons';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import logoIcon from '../../assets/LogoImdad/icon.svg';
+import { useUser } from '../../context/UserContext';
 import './Header.css';
 
 const { Header } = Layout;
@@ -12,6 +13,7 @@ const HeaderComponent = () => {
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const navigate = useNavigate();
   const location = useLocation();
+  const { user, logout } = useUser();
 
   useEffect(() => {
     const handleResize = () => {
@@ -21,48 +23,130 @@ const HeaderComponent = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const menuItems = [
-    {
-      key: '/',
-      label: 'Home'
-    },
-    {
-      key: '/login',
-      label: 'Login'
-    },
-    {
-      key: '/register',
-      label: 'Register'
-    },
-    {
-      key: '/requests/new',
-      label: 'Request Help'
-    },
-    {
-      key: '/dashboard',
-      label: 'Dashboard'
-    },
-    {
-      key: '/profile',
-      label: 'Profile'
-    },
-    {
-      key: '/requests',
-      label: 'View Requests'
-    },
-    {
-      key: '/my-donations',
-      label: 'My Donations'
-    },
-    {
-      key: '/admin/requests',
-      label: 'Admin Requests'
+  const getMenuItems = () => {
+    const baseItems = [
+      {
+        key: '/',
+        label: 'Home',
+        icon: <MenuOutlined />
+      },
+      {
+        key: 'requests',
+        label: 'Requests',
+        icon: <FormOutlined />,
+        children: [
+          {
+            key: '/requests/new',
+            label: 'Request Help'
+          },
+          {
+            key: '/requests',
+            label: 'View Requests'
+          }
+        ]
+      },
+      {
+        key: 'donations',
+        label: 'Donations',
+        icon: <HeartOutlined />,
+        children: [
+          {
+            key: '/make-donation',
+            label: 'Make Donation'
+          },
+          {
+            key: '/my-donations',
+            label: 'My Donations'
+          }
+        ]
+      }
+    ];
+
+    // Only add profile and admin routes if user is logged in
+    if (user) {
+      baseItems.push({
+        key: '/profile',
+        label: 'Profile',
+        icon: <UserOutlined />
+      });
+
+      if (user.type === 'admin') {
+        baseItems.push({
+          key: '/admin/requests',
+          label: 'Admin Requests'
+        });
+      }
     }
-  ];
+
+    return baseItems;
+  };
 
   const handleMenuClick = (e) => {
-    navigate(e.key);
+    if (e.key.startsWith('/')) {
+      navigate(e.key);
+      setMobileMenuVisible(false);
+    }
   };
+
+  const getMobileMenuItems = () => {
+    return getMenuItems().map(item => {
+      if (item.children) {
+        return {
+          key: item.key,
+          label: item.label,
+          icon: item.icon,
+          children: item.children.map(child => ({
+            key: child.key,
+            label: child.label,
+            style: { paddingLeft: '24px' }
+          }))
+        };
+      }
+      return item;
+    });
+  };
+
+  const handleLogin = () => {
+    navigate('/login');
+    setMobileMenuVisible(false);
+  };
+
+  const handleRegister = () => {
+    navigate('/register');
+    setMobileMenuVisible(false);
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+    setMobileMenuVisible(false);
+  };
+
+  const authButtons = user ? (
+    <Button 
+      type="primary" 
+      icon={<LogoutOutlined />}
+      onClick={handleLogout}
+    >
+      Logout
+    </Button>
+  ) : (
+    <Space>
+      <Button 
+        type="primary" 
+        icon={<LoginOutlined />}
+        onClick={handleLogin}
+      >
+        Login
+      </Button>
+      <Button 
+        icon={<UserAddOutlined />}
+        onClick={handleRegister}
+      >
+        Register
+      </Button>
+    </Space>
+  );
 
   return (
     <Header
@@ -82,18 +166,21 @@ const HeaderComponent = () => {
       </div>
 
       {!isMobile && (
-        <Menu
-          mode="horizontal"
-          selectedKeys={[location.pathname]}
-          items={menuItems}
-          onClick={handleMenuClick}
-          style={{
-            flex: 1,
-            justifyContent: 'flex-end',
-            border: 'none',
-            backgroundColor: 'transparent'
-          }}
-        />
+        <>
+          <Menu
+            mode="horizontal"
+            selectedKeys={[location.pathname]}
+            items={getMenuItems()}
+            onClick={handleMenuClick}
+            style={{
+              flex: 1,
+              justifyContent: 'flex-end',
+              border: 'none',
+              backgroundColor: 'transparent'
+            }}
+          />
+          {authButtons}
+        </>
       )}
 
       {isMobile && (
@@ -112,14 +199,15 @@ const HeaderComponent = () => {
         bodyStyle={{ padding: 0 }}
       >
         <Menu
-          mode="vertical"
+          mode="inline"
           selectedKeys={[location.pathname]}
-          items={menuItems}
-          onClick={(e) => {
-            handleMenuClick(e);
-            setMobileMenuVisible(false);
-          }}
+          items={getMobileMenuItems()}
+          onClick={handleMenuClick}
+          style={{ borderRight: 'none' }}
         />
+        <div style={{ padding: '16px' }}>
+          {authButtons}
+        </div>
       </Drawer>
     </Header>
   );

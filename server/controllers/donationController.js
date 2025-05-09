@@ -1,29 +1,22 @@
-import { Donation, Donor, AssistanceType, Request } from '../models/index.js';
+import { Donation } from '../models/index.js';
+import { Op } from 'sequelize';
 
-// Get all donations with related data
+// Get all donations with total amount
 export const getAllDonations = async (req, res) => {
     try {
         const donations = await Donation.findAll({
-            include: [
-                {
-                    model: Donor,
-                    attributes: ['id', 'name', 'email']
-                },
-                {
-                    model: AssistanceType,
-                    attributes: ['id', 'name', 'description']
-                },
-                {
-                    model: Request,
-                    attributes: ['id', 'applicantName', 'status']
-                }
-            ],
             order: [['donationDate', 'DESC']]
         });
+
+        // Calculate total amount
+        const totalAmount = donations.reduce((sum, donation) => {
+            return sum + (parseFloat(donation.amount) || 0);
+        }, 0);
 
         res.status(200).json({
             success: true,
             count: donations.length,
+            totalAmount: totalAmount.toFixed(2),
             data: donations
         });
     } catch (error) {
@@ -36,27 +29,46 @@ export const getAllDonations = async (req, res) => {
     }
 };
 
+// Get donations summary (total count and amount)
+export const getDonationsSummary = async (req, res) => {
+    try {
+        const donations = await Donation.findAll();
+        
+        const totalCount = donations.length;
+        const totalAmount = donations.reduce((sum, donation) => {
+            return sum + (parseFloat(donation.amount) || 0);
+        }, 0);
+
+        // Calculate donations by type
+        const donationsByType = donations.reduce((acc, donation) => {
+            acc[donation.donationType] = (acc[donation.donationType] || 0) + 1;
+            return acc;
+        }, {});
+
+        res.status(200).json({
+            success: true,
+            data: {
+                totalDonations: totalCount,
+                totalAmount: totalAmount.toFixed(2),
+                donationsByType,
+                recentDonations: donations.slice(0, 5) // Get 5 most recent donations
+            }
+        });
+    } catch (error) {
+        console.error('Error in getDonationsSummary:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error fetching donations summary',
+            error: error.message
+        });
+    }
+};
+
 // Get single donation by ID
 export const getDonationById = async (req, res) => {
     try {
         const { id } = req.params;
-
-        const donation = await Donation.findByPk(id, {
-            include: [
-                {
-                    model: Donor,
-                    attributes: ['id', 'name', 'email']
-                },
-                {
-                    model: AssistanceType,
-                    attributes: ['id', 'name', 'description']
-                },
-                {
-                    model: Request,
-                    attributes: ['id', 'applicantName', 'status']
-                }
-            ]
-        });
+        const donation = await Donation.findByPk(id);
 
         if (!donation) {
             return res.status(404).json({
@@ -83,66 +95,51 @@ export const getDonationById = async (req, res) => {
 export const createDonation = async (req, res) => {
     try {
         const {
-            typeName,
-            donorId,
-            requestId,
-            assistanceId,
-            donationType,
-            quantity,
             amount,
-            deliveryMethod
+            donationType,
+            paymentMethod,
+            donorName,
+            donorEmail,
+            donorPhone,
+            message,
+            isAnonymous
         } = req.body;
 
-        // Check if request exists and is still open
-        const request = await Request.findByPk(requestId);
-        if (!request) {
-            return res.status(404).json({
-                success: false,
-                message: 'Request not found'
-            });
-        }
-
-        if (request.status === 'completed' || request.status === 'rejected') {
+        // Validate required fields
+        if (!amount || isNaN(amount) || amount <= 0) {
             return res.status(400).json({
                 success: false,
-                message: 'Cannot donate to a completed or rejected request'
+                message: 'Please provide a valid amount greater than 0'
             });
         }
 
-        // Check if donor exists
-        const donor = await Donor.findByPk(donorId);
-        if (!donor) {
-            return res.status(404).json({
+        if (!donorName || !donorEmail || !paymentMethod) {
+            return res.status(400).json({
                 success: false,
-                message: 'Donor not found'
+                message: 'Please provide all required fields'
             });
         }
 
-        // Check if assistance type exists
-        const assistanceType = await AssistanceType.findByPk(assistanceId);
-        if (!assistanceType) {
-            return res.status(404).json({
+        // Validate email format
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(donorEmail)) {
+            return res.status(400).json({
                 success: false,
-                message: 'Assistance type not found'
+                message: 'Please provide a valid email address'
             });
         }
 
-        // Create the donation
         const donation = await Donation.create({
-            typeName,
-            donorId,
-            requestId,
-            assistanceId,
+            amount: parseFloat(amount),
             donationType,
-            quantity,
-            amount,
-            deliveryMethod,
+            paymentMethod,
+            donorName,
+            donorEmail,
+            donorPhone,
+            message,
+            isAnonymous,
+            status: 'pending',
             donationDate: new Date()
-        });
-
-        // If donation is successful, update request status
-        await request.update({
-            status: 'in-progress'
         });
 
         res.status(201).json({
@@ -165,11 +162,15 @@ export const updateDonation = async (req, res) => {
     try {
         const { id } = req.params;
         const {
-            typeName,
-            donationType,
-            quantity,
             amount,
-            deliveryMethod
+            donationType,
+            paymentMethod,
+            donorName,
+            donorEmail,
+            donorPhone,
+            message,
+            isAnonymous,
+            status
         } = req.body;
 
         const donation = await Donation.findByPk(id);
@@ -181,20 +182,35 @@ export const updateDonation = async (req, res) => {
             });
         }
 
-        // Check if user has permission (admin or donor who created the donation)
-        if (req.user.role !== 'admin' && req.user.id !== donation.donorId) {
-            return res.status(403).json({
+        // Validate amount if provided
+        if (amount && (isNaN(amount) || amount <= 0)) {
+            return res.status(400).json({
                 success: false,
-                message: 'Not authorized to update this donation'
+                message: 'Please provide a valid amount greater than 0'
             });
         }
 
+        // Validate email if provided
+        if (donorEmail) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(donorEmail)) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Please provide a valid email address'
+                });
+            }
+        }
+
         await donation.update({
-            typeName,
-            donationType,
-            quantity,
-            amount,
-            deliveryMethod
+            amount: amount ? parseFloat(amount) : donation.amount,
+            donationType: donationType || donation.donationType,
+            paymentMethod: paymentMethod || donation.paymentMethod,
+            donorName: donorName || donation.donorName,
+            donorEmail: donorEmail || donation.donorEmail,
+            donorPhone: donorPhone || donation.donorPhone,
+            message: message || donation.message,
+            isAnonymous: isAnonymous !== undefined ? isAnonymous : donation.isAnonymous,
+            status: status || donation.status
         });
 
         res.status(200).json({
@@ -216,7 +232,6 @@ export const updateDonation = async (req, res) => {
 export const deleteDonation = async (req, res) => {
     try {
         const { id } = req.params;
-
         const donation = await Donation.findByPk(id);
 
         if (!donation) {
@@ -226,31 +241,7 @@ export const deleteDonation = async (req, res) => {
             });
         }
 
-        // Check if user has permission (admin only)
-        if (req.user.role !== 'admin') {
-            return res.status(403).json({
-                success: false,
-                message: 'Not authorized to delete donations'
-            });
-        }
-
-        // Get the associated request
-        const request = await Request.findByPk(donation.requestId);
-
         await donation.destroy();
-
-        // Update request status if needed
-        if (request) {
-            const remainingDonations = await Donation.count({
-                where: { requestId: request.id }
-            });
-
-            if (remainingDonations === 0) {
-                await request.update({
-                    status: 'pending'
-                });
-            }
-        }
 
         res.status(200).json({
             success: true,

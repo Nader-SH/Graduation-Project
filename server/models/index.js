@@ -22,16 +22,6 @@ Chat.belongsTo(User, { foreignKey: 'receiveId', as: 'receiver' });
 Donor.hasMany(AssistanceType, { foreignKey: 'donorId', onDelete: 'CASCADE' });
 AssistanceType.belongsTo(Donor, { foreignKey: 'donorId' });
 
-// Donor - Donation Relationship
-Donor.hasMany(Donation, { foreignKey: 'donorId', onDelete: 'CASCADE' });
-Donation.belongsTo(Donor, { foreignKey: 'donorId' });
-
-// AssistanceType - Donation Relationship
-AssistanceType.hasMany(Donation, { foreignKey: 'assistanceId', onDelete: 'CASCADE' });
-Donation.belongsTo(AssistanceType, { foreignKey: 'assistanceId' });
-
-// Removed Request - Donation Relationship
-
 // Sync models
 const syncModels = async () => {
     try {

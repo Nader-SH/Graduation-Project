@@ -118,12 +118,12 @@ const ViewRequestsPage = () => {
                     >
                         Donate
                     </Button>
-                    <Button
+                    {/* <Button
                         type="link"
                         onClick={() => navigate(`/requests/${record._id}`)}
                     >
                         View Details
-                    </Button>
+                    </Button> */}
                 </Space>
             ),
         },

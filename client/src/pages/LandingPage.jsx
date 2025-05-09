@@ -3,9 +3,11 @@ import './LandingPage.css'
 import { useState, useRef, useEffect } from "react"
 import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin } from 'react-icons/fa'
 import { HiMenu, HiChevronLeft, HiChevronRight, HiMail, HiPhone, HiArrowRight } from 'react-icons/hi'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Image } from "antd"
+
 export default function LandingPage() {
+  const navigate = useNavigate();
   // Header state
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
@@ -237,6 +239,14 @@ export default function LandingPage() {
     return () => clearInterval(interval)
   }, [currentStoryIndex])
 
+  const handleDonateClick = () => {
+    navigate('/make-donation');
+  };
+
+  const handleRequestHelp = () => {
+    navigate('/requests/new');
+  };
+
   return (
     <div className="page-container">
       <main className="main-content">
@@ -249,8 +259,8 @@ export default function LandingPage() {
                 Send Your Donations To Those In Need And We Make Sure They Reach Those Who Truly Need Them
               </p>
               <div className="hero-buttons">
-                <button className="btn btn-primary">Donate Now</button>
-                <button className="btn btn-outline">Request Help</button>
+                <button className="btn btn-primary" onClick={handleDonateClick}>Donate Now</button>
+                <button className="btn btn-outline" onClick={handleRequestHelp}>Request Help</button>
               </div>
             </div>
             <div className="hero-image-container">
@@ -406,7 +416,7 @@ export default function LandingPage() {
                         <h4 className="story-title">{story.title}</h4>
                         <p className="story-description">{story.description}</p>
                         <div className="story-buttons">
-                          <button className="btn btn-primary">Start Donating</button>
+                          <button className="btn btn-primary" onClick={handleDonateClick}>Start Donating</button>
                           <button className="btn btn-outline">Read The Story</button>
                         </div>
                       </div>
@@ -472,7 +482,7 @@ export default function LandingPage() {
                         <h4 className="case-title">{caseItem.title}</h4>
                         <p className="case-description">{caseItem.description}</p>
                         <div className="case-buttons">
-                          <button className="btn btn-primary">Start Donating</button>
+                          <button className="btn btn-primary" onClick={handleDonateClick}>Start Donating</button>
                           <button className="btn btn-outline">Case Details</button>
                         </div>
                       </div>
@@ -501,7 +511,7 @@ export default function LandingPage() {
           <div className="container">
             <h2 className="cta-title">Your Donation Today... Hope For A Better Tomorrow</h2>
             <div className="cta-buttons">
-              <button className="btn btn-primary">Start Donating</button>
+              <button className="btn btn-primary" onClick={handleDonateClick}>Start Donating</button>
               <button className="btn btn-outline">Learn More</button>
             </div>
             <p className="cta-subtitle">Make A Real Difference In The Lives Of Those In Need</p>

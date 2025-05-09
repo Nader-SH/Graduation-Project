@@ -17,7 +17,9 @@ import DashboardPage from './pages/DashboardPage';
 import LandingPage from './pages/LandingPage';
 import ViewRequestsPage from './pages/ViewRequestsPage';
 import MyDonationsPage from './pages/MyDonationsPage';
+import DonationForm from './components/donations/DonationForm';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { UserProvider } from './context/UserContext';
 
 const { Content } = Layout;
 
@@ -49,62 +51,69 @@ const App = () => {
   }, []);
 
   return (
-    <Router>
+    <UserProvider>
       <AuthProvider>
-        <Layout>
-          <HeaderComponent />
-          <Content
-            style={{
-              padding: isMobile ? '0' : '0 50px',
-              marginTop: 15,
-              minHeight: 'calc(100vh - 64px)'
-            }}
-          >
-            <Routes>
-              {/* Public Routes */}
-              <Route path="/" element={<LandingPage />} />
-              <Route path="/login" element={<LoginForm />} />
-              <Route path="/register" element={<RegisterForm />} />
-              <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-              <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
-              <Route path="/requests/new" element={<RequestForm />} />
-              <Route path="/request-success" element={<RequestSuccess />} />
+        <Router>
+          <Layout>
+            <HeaderComponent />
+            <Content
+              style={{
+                padding: isMobile ? '0' : '0 50px',
+                marginTop: 15,
+                minHeight: 'calc(100vh - 64px)'
+              }}
+            >
+              <Routes>
+                {/* Public Routes */}
+                <Route path="/" element={<LandingPage />} />
+                <Route path="/login" element={<LoginForm />} />
+                <Route path="/register" element={<RegisterForm />} />
+                <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+                <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
+                <Route path="/requests/new" element={<RequestForm />} />
+                <Route path="/request-success" element={<RequestSuccess />} />
 
-              {/* Protected Routes */}
-              <Route path="/dashboard" element={
-                <ProtectedRoute>
-                  <DashboardPage />
-                </ProtectedRoute>
-              } />
-              <Route path="/profile" element={
-                <ProtectedRoute>
-                  <ProfilePage />
-                </ProtectedRoute>
-              } />
-              <Route path="/requests" element={
-                <ProtectedRoute>
-                  <ViewRequestsPage />
-                </ProtectedRoute>
-              } />
-              <Route path="/my-donations" element={
-                <ProtectedRoute>
-                  <MyDonationsPage />
-                </ProtectedRoute>
-              } />
-              <Route path="/admin/requests" element={
-                <ProtectedRoute>
-                  <RequestList />
-                </ProtectedRoute>
-              } />
+                {/* Protected Routes */}
+                <Route path="/dashboard" element={
+                  <ProtectedRoute>
+                    <DashboardPage />
+                  </ProtectedRoute>
+                } />
+                <Route path="/profile" element={
+                  <ProtectedRoute>
+                    <ProfilePage />
+                  </ProtectedRoute>
+                } />
+                <Route path="/requests" element={
+                  <ProtectedRoute>
+                    <ViewRequestsPage />
+                  </ProtectedRoute>
+                } />
+                <Route path="/my-donations" element={
+                  <ProtectedRoute>
+                    <MyDonationsPage />
+                  </ProtectedRoute>
+                } />
+                <Route path="/make-donation" element={
+                  <ProtectedRoute>
+                    <DonationForm />
+                  </ProtectedRoute>
+                } />
+                <Route path="/admin/requests" element={
+                  <ProtectedRoute>
+                    <RequestList />
+                  </ProtectedRoute>
+                } />
 
-              {/* Catch all route */}
-              <Route path="*" element={<Navigate to="/" replace />} />
-            </Routes>
-          </Content>
-          <Footer />
-        </Layout>
+                {/* Catch all route */}
+                <Route path="*" element={<Navigate to="/" replace />} />
+              </Routes>
+            </Content>
+            <Footer />
+          </Layout>
+        </Router>
       </AuthProvider>
-    </Router>
+    </UserProvider>
   );
 };
 
