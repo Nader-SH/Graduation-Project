@@ -220,7 +220,7 @@ const RegisterForm = () => {
               size="large"
             >
               <Option value="donor">Donor</Option>
-              <Option value="recipient">Recipient</Option>
+              <Option value="admin">Admin</Option>
             </Select>
           </Form.Item>
 

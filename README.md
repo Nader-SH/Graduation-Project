@@ -22,6 +22,9 @@ Authorization: Bearer <your_jwt_token>
 | POST | `/auth/register` | Register new user | Public |
 | POST | `/auth/login` | Login user | Public |
 | POST | `/auth/logout` | Logout user | Protected |
+| POST | `/auth/forgot-password` | Request password reset | Public |
+| POST | `/auth/reset-password/:token` | Reset password | Public |
+| GET | `/auth/verify-email/:token` | Verify email address | Public |
 
 #### 2. Users
 | Method | Endpoint | Description | Access |
@@ -29,8 +32,11 @@ Authorization: Bearer <your_jwt_token>
 | GET | `/users` | Get all users | Admin |
 | GET | `/users/:id` | Get user by ID | Admin/Owner |
 | GET | `/users/profile` | Get user profile | Protected |
+| GET | `/users/me` | Get current user | Protected |
 | PUT | `/users/:id` | Update user | Owner/Admin |
 | DELETE | `/users/:id` | Delete user | Admin |
+| PUT | `/users/:id/status` | Update user status | Admin |
+| PUT | `/users/:id/role` | Update user role | Admin |
 
 #### 3. Requests
 | Method | Endpoint | Description | Access |
@@ -41,6 +47,8 @@ Authorization: Bearer <your_jwt_token>
 | PUT | `/requests/:id` | Update request | Owner/Admin |
 | DELETE | `/requests/:id` | Delete request | Admin |
 | PUT | `/requests/:id/status` | Update status | Admin |
+| GET | `/requests/user/:userId` | Get user's requests | Protected |
+| GET | `/requests/stats` | Get request statistics | Admin |
 
 #### 4. Donations
 | Method | Endpoint | Description | Access |
@@ -50,6 +58,9 @@ Authorization: Bearer <your_jwt_token>
 | POST | `/donations` | Create donation | Protected |
 | PUT | `/donations/:id` | Update donation | Admin |
 | DELETE | `/donations/:id` | Delete donation | Admin |
+| GET | `/donations/summary` | Get donation summary | Public |
+| GET | `/donations/user/:userId` | Get user's donations | Protected |
+| GET | `/donations/stats` | Get donation statistics | Admin |
 
 #### 5. Assistance Types
 | Method | Endpoint | Description | Access |
@@ -59,6 +70,7 @@ Authorization: Bearer <your_jwt_token>
 | POST | `/assistance-types` | Create type | Admin |
 | PUT | `/assistance-types/:id` | Update type | Admin |
 | DELETE | `/assistance-types/:id` | Delete type | Admin |
+| GET | `/assistance-types/stats` | Get type statistics | Admin |
 
 #### 6. Donors
 | Method | Endpoint | Description | Access |
@@ -68,14 +80,19 @@ Authorization: Bearer <your_jwt_token>
 | POST | `/donors` | Register donor | Protected |
 | PUT | `/donors/:id` | Update donor | Admin |
 | DELETE | `/donors/:id` | Delete donor | Admin |
+| GET | `/donors/stats` | Get donor statistics | Admin |
+| GET | `/donors/user/:userId` | Get user's donor profile | Protected |
 
 #### 7. Chat
 | Method | Endpoint | Description | Access |
 |--------|----------|-------------|---------|
 | GET | `/chats` | Get all chats | Protected |
 | GET | `/chats/:id` | Get chat by ID | Protected |
-| POST | `/chats` | Send message | Protected |
-| GET | `/chats/history/:userId` | Get chat history | Protected |
+| POST | `/chats` | Create new chat | Protected |
+| POST | `/chats/:id/messages` | Send message | Protected |
+| GET | `/chats/:id/messages` | Get chat messages | Protected |
+| GET | `/chats/user/:userId` | Get user's chats | Protected |
+| PUT | `/chats/:id/status` | Update chat status | Protected |
 
 ### Detailed API Documentation
 
@@ -109,6 +126,29 @@ POST /api/auth/login
 }
 ```
 
+##### Forgot Password
+```http
+POST /api/auth/forgot-password
+```
+**Request Body:**
+```json
+{
+  "email": "string"
+}
+```
+
+##### Reset Password
+```http
+POST /api/auth/reset-password/:token
+```
+**Request Body:**
+```json
+{
+  "password": "string",
+  "confirmPassword": "string"
+}
+```
+
 #### User APIs
 
 ##### Get User Profile
@@ -125,7 +165,10 @@ GET /api/users/profile
     "lastName": "string",
     "email": "string",
     "type": "string",
-    "requests": []
+    "image": "string",
+    "status": "string",
+    "createdAt": "date",
+    "updatedAt": "date"
   }
 }
 ```
@@ -144,7 +187,42 @@ POST /api/requests
   "familyMembersCount": "number",
   "headOfFamilyStatus": "string",
   "location": "string",
-  "description": "string (optional)"
+  "description": "string (optional)",
+  "assistanceTypeId": "number"
+}
+```
+
+#### Donation APIs
+
+##### Create Donation
+```http
+POST /api/donations
+```
+**Request Body:**
+```json
+{
+  "amount": "number",
+  "donationType": "one-time | monthly | quarterly | yearly",
+  "paymentMethod": "credit_card | bank_transfer | cash | other",
+  "donorName": "string",
+  "donorEmail": "string",
+  "donorPhone": "string (optional)",
+  "message": "string (optional)",
+  "isAnonymous": "boolean"
+}
+```
+
+#### Chat APIs
+
+##### Send Message
+```http
+POST /api/chats/:id/messages
+```
+**Request Body:**
+```json
+{
+  "content": "string",
+  "type": "text | image | file"
 }
 ```
 
@@ -177,21 +255,27 @@ Common HTTP Status Codes:
    - JWT-based authentication
    - Token expiration: 24 hours
    - HTTP-only cookies for token storage
+   - Password reset functionality
+   - Email verification
 
 2. **Authorization:**
    - Role-based access control (Admin, Donor, Recipient)
    - Resource ownership verification
+   - Route-level middleware protection
 
 3. **Data Protection:**
    - Password hashing using bcrypt
    - Input validation and sanitization
    - Rate limiting
    - CORS protection
+   - SQL injection prevention
+   - XSS protection
 
 ### Rate Limiting
 
 - Authenticated users: 100 requests per minute
 - Unauthenticated users: 30 requests per minute
+- Admin endpoints: 200 requests per minute
 
 ### Development Setup
 
