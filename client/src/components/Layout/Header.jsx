@@ -24,7 +24,7 @@ const HeaderComponent = () => {
   }, []);
 
   const getMenuItems = () => {
-    const baseItems = [
+    return [
       {
         key: '/',
         label: 'Home',
@@ -59,26 +59,21 @@ const HeaderComponent = () => {
             label: 'My Donations'
           }
         ]
-      }
-    ];
-
-    // Only add profile and admin routes if user is logged in
-    if (user) {
-      baseItems.push({
+      },
+      {
         key: '/profile',
         label: 'Profile',
         icon: <UserOutlined />
-      });
-
-      if (user.type === 'admin') {
-        baseItems.push({
-          key: '/admin/requests',
-          label: 'Admin Requests'
-        });
+      },
+      {
+        key: '/admin/requests',
+        label: 'Admin Requests'
+      },
+      {
+        key: '/admin/volunteers',
+        label: 'Volunteer Approvals'
       }
-    }
-
-    return baseItems;
+    ];
   };
 
   const handleMenuClick = (e) => {

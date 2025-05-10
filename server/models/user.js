@@ -33,7 +33,23 @@ User.init({
     },
     type: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: false,
+        validate: {
+            isIn: [['volunteer', 'admin']]
+        }
+    },
+    status: {
+        type: DataTypes.ENUM('pending', 'approved', 'rejected'),
+        allowNull: false,
+        defaultValue: 'pending',
+        set(value) {
+            // If type is admin, force status to be approved
+            if (this.type === 'admin') {
+                this.setDataValue('status', 'approved');
+            } else {
+                this.setDataValue('status', value);
+            }
+        }
     },
     image: {
         type: DataTypes.STRING,
@@ -42,7 +58,16 @@ User.init({
 }, {
     sequelize,
     modelName: 'User',
-    timestamps: true
+    timestamps: true,
+    hooks: {
+        beforeCreate: (user) => {
+            // Set status to approved if type is admin
+            if (user.type === 'admin') {
+                user.status = 'approved';
+                user.role = 'admin';
+            }
+        }
+    }
 });
 
 export default User;

@@ -18,6 +18,7 @@ import LandingPage from './pages/LandingPage';
 import ViewRequestsPage from './pages/ViewRequestsPage';
 import MyDonationsPage from './pages/MyDonationsPage';
 import DonationForm from './components/donations/DonationForm';
+import VolunteerApprovalPage from './pages/VolunteerApprovalPage';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { UserProvider } from './context/UserContext';
 
@@ -25,16 +26,6 @@ const { Content } = Layout;
 
 // Protected Route component
 const ProtectedRoute = ({ children }) => {
-  const { isAuthenticated, loading } = useAuth();
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  // if (!isAuthenticated) {
-  //   return <Navigate to="/login" />;
-  // }
-
   return children;
 };
 
@@ -102,6 +93,11 @@ const App = () => {
                 <Route path="/admin/requests" element={
                   <ProtectedRoute>
                     <RequestList />
+                  </ProtectedRoute>
+                } />
+                <Route path="/admin/volunteers" element={
+                  <ProtectedRoute>
+                    <VolunteerApprovalPage />
                   </ProtectedRoute>
                 } />
 

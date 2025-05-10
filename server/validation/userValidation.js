@@ -40,10 +40,10 @@ export const registerSchema = Joi.object({
         .default('user'),
     type: Joi.string()
         .required()
-        .valid('donor', 'recipient')
+        .valid('volunteer', 'admin')
         .messages({
             'string.empty': 'User type is required',
-            'any.only': 'User type must be either donor or recipient'
+            'any.only': 'User type must be either volunteer or admin'
         }),
     image: Joi.string()
         .allow(null, '')

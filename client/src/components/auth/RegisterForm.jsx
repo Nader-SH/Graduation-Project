@@ -28,34 +28,9 @@ const RegisterForm = () => {
       );
 
       if (response.data.success) {
-        // Store the token from the correct path
-        localStorage.setItem('token', response.data.data.token);
-
-        // Update auth context with user data
-        const userData = response.data.data; // The user data is directly in response.data.data
-        login(userData);
-
-        message.success(response.data.message || 'Registration successful');
-
-        // Get user type from the correct path
-        const userType = userData.type?.toLowerCase(); // Add optional chaining and normalize case
-
-        // Navigate based on user type
-        if (userType) {
-          switch (userType) {
-            case 'donor':
-              navigate('/donor/dashboard');
-              break;
-            case 'recipient':
-              navigate('/recipient/dashboard');
-              break;
-            default:
-              navigate('/dashboard');
-          }
-        } else {
-          // Fallback if type is not available
-          navigate('/dashboard');
-        }
+        message.success(response.data.message || 'Registration successful. Please login to continue.');
+        // Navigate to login page after successful registration
+        navigate('/login');
       } else {
         throw new Error(response.data.message || 'Registration failed');
       }
@@ -219,7 +194,7 @@ const RegisterForm = () => {
               placeholder="Select your user type"
               size="large"
             >
-              <Option value="donor">Donor</Option>
+              <Option value="volunteer">Volunteer</Option>
               <Option value="admin">Admin</Option>
             </Select>
           </Form.Item>

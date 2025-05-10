@@ -64,8 +64,15 @@ export const login = async (req, res, next) => {
 
     // Find user by email
     const user = await User.findOne({ where: { email } });
+    console.log('User found:', user);
+    
     if (!user) {
       return next(createError(401, 'Invalid credentials'));
+    }
+
+    // Check user status
+    if (user.status === 'pending') {
+      return next(createError(403, 'Your account is pending approval. Please wait for admin approval.'));
     }
 
     // Verify password

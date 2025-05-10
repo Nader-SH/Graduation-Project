@@ -12,7 +12,7 @@ export const register = async (req, res) => {
 
         const { firstName, lastName, email, password, type, image } = req.body;
 
-        if (!firstName || !lastName || !email || !password || !type || !image) {
+        if (!firstName || !lastName || !email || !password || !type) {
             return res.status(400).json({
                 message: "All fields are required",
                 required: {
@@ -20,9 +20,17 @@ export const register = async (req, res) => {
                     lastName: !lastName ? "missing" : "received",
                     email: !email ? "missing" : "received",
                     password: !password ? "missing" : "received",
-                    type: !type ? "missing" : "received",
-                    image: !image ? "missing" : "received"
+                    type: !type ? "missing" : "received"
                 }
+            });
+        }
+
+        // Validate user type
+        const validTypes = ['volunteer', 'admin'];
+        const userType = type.toLowerCase();
+        if (!validTypes.includes(userType)) {
+            return res.status(400).json({
+                message: "Invalid user type. Must be either volunteer or admin"
             });
         }
 
@@ -35,31 +43,57 @@ export const register = async (req, res) => {
         // Hash password
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
-        console.log('hashedPassword', hashedPassword);
+
         // Create new user
         const newUser = await User.create({
             firstName,
             lastName,
             email,
             password: hashedPassword,
-            type,
-            image
+            type: userType,
+            image,
+            role: userType === 'admin' ? 'admin' : 'user'
         });
 
-        res.status(201).json({
-            message: "User created successfully",
-            user: {
+        // Create and assign token
+        const token = jwt.sign(
+            {
                 id: newUser.id,
-                firstName: newUser.firstName,
-                lastName: newUser.lastName,
                 email: newUser.email,
                 type: newUser.type,
-                image: newUser.image
+                role: newUser.role
+            },
+            process.env.JWT_SECRET,
+            { expiresIn: '1h' }
+        );
+
+        res.status(201).json({
+            success: true,
+            message: userType === 'admin' ? "Admin account created successfully" : "Registration submitted for approval",
+            data: {
+                user: {
+                    id: newUser.id,
+                    firstName: newUser.firstName,
+                    lastName: newUser.lastName,
+                    email: newUser.email,
+                    type: newUser.type,
+                    role: newUser.role,
+                    status: newUser.status,
+                    image: newUser.image,
+                    createdAt: newUser.createdAt,
+                    updatedAt: newUser.updatedAt
+                },
+                token
             }
         });
 
     } catch (error) {
-        res.status(500).json({ message: "Error creating user", error: error.message });
+        console.error('Registration error:', error);
+        res.status(500).json({ 
+            success: false,
+            message: "Error creating user", 
+            error: error.message 
+        });
     }
 };
 
@@ -68,24 +102,32 @@ export const login = async (req, res) => {
     try {
         const { email, password } = req.body;
 
-        // Add debug logging
-        console.log('JWT_SECRET:', process.env.JWT_SECRET);
-
         // Check if user exists
         const user = await User.findOne({ where: { email } });
+        console.log('User found:', user);
+
         if (!user) {
-            return res.status(404).json({ message: "User not found" });
+            return res.status(404).json({ 
+                success: false,
+                message: "User not found" 
+            });
         }
-        console.log(password, user.password);
+
+        // Check user status first
+        if (user.status === 'pending') {
+            return res.status(403).json({ 
+                success: false,
+                message: "Your account is pending approval. Please wait for admin approval." 
+            });
+        }
+
         // Verify password
         const validPassword = await bcrypt.compare(password, user.password);
         if (!validPassword) {
-            return res.status(400).json({ message: "Invalid password" });
-        }
-
-        // Ensure JWT_SECRET exists
-        if (!process.env.JWT_SECRET) {
-            throw new Error('JWT_SECRET is not defined');
+            return res.status(400).json({ 
+                success: false,
+                message: "Invalid password" 
+            });
         }
 
         // Create and assign token
@@ -93,31 +135,37 @@ export const login = async (req, res) => {
             {
                 id: user.id,
                 email: user.email,
-                type: user.type
+                type: user.type,
+                role: user.role
             },
             process.env.JWT_SECRET,
             { expiresIn: '1h' }
         );
 
         res.status(200).json({
+            success: true,
             message: "Logged in successfully",
-            token,
-            user: {
-                id: user.id,
-                firstName: user.firstName,
-                lastName: user.lastName,
-                email: user.email,
-                type: user.type,
-                image: user.image
+            data: {
+                user: {
+                    id: user.id,
+                    firstName: user.firstName,
+                    lastName: user.lastName,
+                    email: user.email,
+                    type: user.type,
+                    role: user.role,
+                    status: user.status,
+                    image: user.image
+                },
+                token
             }
         });
 
     } catch (error) {
-        console.error('Login error:', error);  // Add detailed error logging
+        console.error('Login error:', error);
         res.status(500).json({
+            success: false,
             message: "Error logging in",
-            error: error.message,
-            details: process.env.JWT_SECRET ? 'JWT_SECRET exists' : 'JWT_SECRET is missing'
+            error: error.message
         });
     }
 };
@@ -420,6 +468,167 @@ export const changePassword = async (req, res) => {
         res.status(500).json({
             success: false,
             message: 'Error changing password',
+            error: error.message
+        });
+    }
+};
+
+// Approve volunteer
+export const approveVolunteer = async (req, res) => {
+    try {
+        const { id } = req.params;
+        
+        // Check if the requesting user is an admin
+        if (req.user.type !== 'admin') {
+            return res.status(403).json({
+                success: false,
+                message: 'Only admins can approve volunteers'
+            });
+        }
+
+        const user = await User.findByPk(id);
+
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: 'User not found'
+            });
+        }
+
+        if (user.type !== 'volunteer') {
+            return res.status(400).json({
+                success: false,
+                message: 'Only volunteer accounts can be approved'
+            });
+        }
+
+        if (user.status === 'approved') {
+            return res.status(400).json({
+                success: false,
+                message: 'User is already approved'
+            });
+        }
+
+        await user.update({ status: 'approved' });
+
+        res.status(200).json({
+            success: true,
+            message: 'Volunteer approved successfully',
+            user: {
+                id: user.id,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                email: user.email,
+                type: user.type,
+                status: 'approved'
+            }
+        });
+
+    } catch (error) {
+        console.error('Error in approveVolunteer:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error approving volunteer',
+            error: error.message
+        });
+    }
+};
+
+// Get pending volunteers (admin only)
+export const getPendingVolunteers = async (req, res) => {
+    try {
+        // Check if the requesting user is an admin
+        if (req.user.type !== 'admin') {
+            return res.status(403).json({
+                success: false,
+                message: 'Only admins can view pending volunteers'
+            });
+        }
+
+        const pendingVolunteers = await User.findAll({
+            where: {
+                type: 'volunteer',
+                status: 'pending'
+            },
+            attributes: { exclude: ['password'] }
+        });
+
+        res.status(200).json({
+            success: true,
+            count: pendingVolunteers.length,
+            data: pendingVolunteers
+        });
+    } catch (error) {
+        console.error('Error in getPendingVolunteers:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error fetching pending volunteers',
+            error: error.message
+        });
+    }
+};
+
+// Reject volunteer
+export const rejectVolunteer = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { reason } = req.body;
+        
+        // Check if the requesting user is an admin
+        if (req.user.type !== 'admin') {
+            return res.status(403).json({
+                success: false,
+                message: 'Only admins can reject volunteers'
+            });
+        }
+
+        const user = await User.findByPk(id);
+
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: 'User not found'
+            });
+        }
+
+        if (user.type !== 'volunteer') {
+            return res.status(400).json({
+                success: false,
+                message: 'Only volunteer accounts can be rejected'
+            });
+        }
+
+        if (user.status === 'rejected') {
+            return res.status(400).json({
+                success: false,
+                message: 'User is already rejected'
+            });
+        }
+
+        await user.update({ 
+            status: 'rejected',
+            rejectionReason: reason || null
+        });
+
+        res.status(200).json({
+            success: true,
+            message: 'Volunteer rejected successfully',
+            user: {
+                id: user.id,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                email: user.email,
+                type: user.type,
+                status: 'rejected',
+                rejectionReason: reason
+            }
+        });
+
+    } catch (error) {
+        console.error('Error in rejectVolunteer:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error rejecting volunteer',
             error: error.message
         });
     }
