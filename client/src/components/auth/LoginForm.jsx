@@ -32,19 +32,7 @@ const LoginForm = () => {
         login(userData);
 
         message.success('Login successful');
-
-        const userType = userData.type?.toLowerCase();
-        const userRole = userData.role?.toLowerCase();
-
-        if (userRole === 'admin') {
-          navigate('/admin/dashboard');
-        } else if (userType === 'donor') {
-          navigate('/donor/dashboard');
-        } else if (userType === 'recipient') {
-          navigate('/recipient/dashboard');
-        } else {
-          navigate('/dashboard');
-        }
+        navigate('/');
       } else {
         throw new Error(response.data.message || 'Login failed');
       }
