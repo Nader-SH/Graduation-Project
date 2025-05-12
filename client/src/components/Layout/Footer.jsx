@@ -4,7 +4,80 @@ import { Link } from 'react-router-dom';
 import { FaFacebook, FaInstagram, FaLinkedinIn, FaTwitter } from 'react-icons/fa';
 import { HiMail, HiPhone } from 'react-icons/hi';
 import logoIcon from '../../assets/LogoImdad/icon.svg';
+
 const Footer = () => {
+  const getFooterLinks = () => [
+    {
+      key: '/',
+      label: 'Home',
+    },
+    {
+      key: 'requests',
+      label: 'Requests',
+      children: [
+        {
+          key: '/requests/new',
+          label: 'Request Help'
+        },
+        {
+          key: '/requests',
+          label: 'View Requests'
+        }
+      ]
+    },
+    {
+      key: 'donations',
+      label: 'Donations',
+      children: [
+        {
+          key: '/make-donation',
+          label: 'Make Donation'
+        },
+        {
+          key: '/my-donations',
+          label: 'My Donations'
+        }
+      ]
+    },
+    {
+      key: '/profile',
+      label: 'Profile',
+    },
+    {
+      key: '/admin/requests',
+      label: 'Admin Requests'
+    },
+    {
+      key: '/admin/volunteers',
+      label: 'Volunteer Approvals'
+    }
+  ];
+
+  const renderFooterLinks = (links) => {
+    return links.map((link) => (
+      <li key={link.key}>
+        {link.children ? (
+          <>
+            <span className="footer-link">{link.label}</span>
+            <ul className="footer-sublinks">
+              {link.children.map((child) => (
+                <li key={child.key}>
+                  <Link to={child.key} className="footer-link">
+                    {child.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </>
+        ) : (
+          <Link to={link.key} className="footer-link">
+            {link.label}
+          </Link>
+        )}
+      </li>
+    ));
+  };
+
   return (
       <footer className="footer">
         <div className="container">
@@ -22,26 +95,7 @@ const Footer = () => {
             <div className="footer-column">
               <h4 className="footer-heading">Quick Links</h4>
               <ul className="footer-links">
-                <li>
-                  <Link to="/about" className="footer-link">
-                    About Us
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/categories" className="footer-link">
-                    Categories
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/volunteers" className="footer-link">
-                    Volunteers
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/contact" className="footer-link">
-                    Contact
-                  </Link>
-                </li>
+                {renderFooterLinks(getFooterLinks())}
               </ul>
             </div>
 

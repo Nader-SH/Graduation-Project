@@ -1,0 +1,29 @@
+.footer-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-links li {
+  margin-bottom: 12px;
+}
+
+.footer-link {
+  color: #666;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.footer-link:hover {
+  color: #1890ff;
+}
+
+.footer-sublinks {
+  list-style: none;
+  padding-left: 16px;
+  margin-top: 8px;
+}
+
+.footer-sublinks li {
+  margin-bottom: 8px;
+} 

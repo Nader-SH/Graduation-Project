@@ -534,17 +534,9 @@ export const approveVolunteer = async (req, res) => {
     }
 };
 
-// Get pending volunteers (admin only)
+// Get pending volunteers
 export const getPendingVolunteers = async (req, res) => {
     try {
-        // Check if the requesting user is an admin
-        if (req.user.type !== 'admin') {
-            return res.status(403).json({
-                success: false,
-                message: 'Only admins can view pending volunteers'
-            });
-        }
-
         const pendingVolunteers = await User.findAll({
             where: {
                 type: 'volunteer',

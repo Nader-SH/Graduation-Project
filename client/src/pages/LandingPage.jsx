@@ -5,6 +5,7 @@ import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin } from 'react-icons/fa'
 import { HiMenu, HiChevronLeft, HiChevronRight, HiMail, HiPhone, HiArrowRight } from 'react-icons/hi'
 import { Link, useNavigate } from 'react-router-dom'
 import { Image } from "antd"
+import axios from "axios"
 
 export default function LandingPage() {
   const navigate = useNavigate();
@@ -23,27 +24,29 @@ export default function LandingPage() {
   const [caseTouchEnd, setCaseTouchEnd] = useState(0)
   const caseSliderRef = useRef(null)
 
-  // Stories data
-  const stories = [
-    {
-      id: 1,
-      title: "Mohammad's Recovery From Illness",
-      description: "Mohammad received critical medical treatment thanks to generous donors",
-      image: "/assets/ProjectGraduationImages/Rectangle 4.svg",
-    },
-    {
-      id: 2,
-      title: "Fatima's Education Journey",
-      description: "Fatima was able to continue her studies with the help of our donors",
-      image: "/assets/ProjectGraduationImages/Rectangle 4-1.svg",
-    },
-    {
-      id: 3,
-      title: "Ahmed's Family Support",
-      description: "Ahmed's family received food and shelter during difficult times",
-      image: "/assets/ProjectGraduationImages/Rectangle 4-2.svg",
-    },
-  ]
+  // Requests data for stories
+  const [requests, setRequests] = useState([]);
+
+  useEffect(() => {
+    const fetchRequests = async () => {
+      try {
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/requests`);
+        // Use response.data.data if your API wraps the array, otherwise response.data
+        setRequests(response.data.data || response.data);
+      } catch (error) {
+        console.error('Error fetching requests:', error);
+      }
+    };
+    fetchRequests();
+  }, []);
+
+  // Map requests to stories format for the slider
+  const stories = requests.slice(0, 3).map(req => ({
+    id: req.id,
+    title: req.applicantName ? `${req.applicantName}'s Request` : 'Request',
+    description: req.description || 'No description provided.',
+    image: '/assets/ProjectGraduationImages/Rectangle 4.svg', // Placeholder or use req.image if available
+  }));
 
   // Featured cases data
   const featuredCases = [
@@ -230,21 +233,16 @@ export default function LandingPage() {
     }
   }
 
-  // Auto slide for stories every 5 seconds
-  useEffect(() => {
-    const interval = setInterval(() => {
-      handleNextStory()
-    }, 5000)
-
-    return () => clearInterval(interval)
-  }, [currentStoryIndex])
-
   const handleDonateClick = () => {
     navigate('/make-donation');
   };
 
   const handleRequestHelp = () => {
     navigate('/requests/new');
+  };
+
+  const handleReadStory = (id) => {
+    navigate(`/requests/${id}`);
   };
 
   return (
@@ -384,15 +382,17 @@ export default function LandingPage() {
             </div>
 
             <div className="slider-header">
-              <h3 className="slider-title">Success Stories</h3>
-              <div className="slider-controls">
-                <button onClick={handlePrevStory} className="slider-control" aria-label="Previous slide">
-                  <HiChevronLeft className="control-icon" />
-                </button>
-                <button onClick={handleNextStory} className="slider-control" aria-label="Next slide">
-                  <HiChevronRight className="control-icon" />
-                </button>
-              </div>
+              {/* <h3 className="slider-title">Success Stories</h3> */}
+              {stories.length > 1 && (
+                <div className="slider-controls">
+                  <button onClick={handlePrevStory} className="slider-control" aria-label="Previous slide">
+                    <HiChevronLeft className="control-icon" />
+                  </button>
+                  <button onClick={handleNextStory} className="slider-control" aria-label="Next slide">
+                    <HiChevronRight className="control-icon" />
+                  </button>
+                </div>
+              )}
             </div>
 
             <div
@@ -417,7 +417,7 @@ export default function LandingPage() {
                         <p className="story-description">{story.description}</p>
                         <div className="story-buttons">
                           <button className="btn btn-primary" onClick={handleDonateClick}>Start Donating</button>
-                          <button className="btn btn-outline">Read The Story</button>
+                          <button className="btn btn-outline" onClick={() => handleReadStory(story.id)}>Read The Story</button>
                         </div>
                       </div>
                     </div>
@@ -425,23 +425,24 @@ export default function LandingPage() {
                 ))}
               </div>
 
-              {/* Dots indicator */}
-              <div className="slider-dots">
-                {stories.map((_, index) => (
-                  <button
-                    key={index}
-                    onClick={() => handleStoryDotClick(index)}
-                    className={`slider-dot ${currentStoryIndex === index ? "active" : ""}`}
-                    aria-label={`Go to slide ${index + 1}`}
-                  />
-                ))}
-              </div>
+              {stories.length > 1 && (
+                <div className="slider-dots">
+                  {stories.map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => handleStoryDotClick(index)}
+                      className={`slider-dot ${currentStoryIndex === index ? "active" : ""}`}
+                      aria-label={`Go to slide ${index + 1}`}
+                    />
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </section>
 
         {/* Featured Cases Section */}
-        <section className="featured-cases-section">
+        {/* <section className="featured-cases-section">
           <div className="container">
             <div className="slider-header">
               <h3 className="slider-title">Featured Cases</h3>
@@ -490,8 +491,6 @@ export default function LandingPage() {
                   </div>
                 ))}
               </div>
-
-              {/* Dots indicator */}
               <div className="slider-dots">
                 {featuredCases.map((_, index) => (
                   <button
@@ -504,7 +503,7 @@ export default function LandingPage() {
               </div>
             </div>
           </div>
-        </section>
+        </section> */}
 
         {/* Call to Action Section */}
         <section className="cta-section">

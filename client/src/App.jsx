@@ -19,6 +19,7 @@ import ViewRequestsPage from './pages/ViewRequestsPage';
 import MyDonationsPage from './pages/MyDonationsPage';
 import DonationForm from './components/donations/DonationForm';
 import VolunteerApprovalPage from './pages/VolunteerApprovalPage';
+import RequestDetails from './pages/RequestDetails';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { UserProvider } from './context/UserContext';
 
@@ -63,7 +64,8 @@ const App = () => {
                 <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
                 <Route path="/requests/new" element={<RequestForm />} />
                 <Route path="/request-success" element={<RequestSuccess />} />
-
+                <Route path="/requests/:id" element={<RequestDetails />} />
+                <Route path="/admin/volunteers" element={<VolunteerApprovalPage />} />
                 {/* Protected Routes */}
                 <Route path="/dashboard" element={
                   <ProtectedRoute>
@@ -95,11 +97,11 @@ const App = () => {
                     <RequestList />
                   </ProtectedRoute>
                 } />
-                <Route path="/admin/volunteers" element={
+                {/* <Route path="/admin/volunteers" element={
                   <ProtectedRoute>
                     <VolunteerApprovalPage />
                   </ProtectedRoute>
-                } />
+                } /> */}
 
                 {/* Catch all route */}
                 <Route path="*" element={<Navigate to="/" replace />} />

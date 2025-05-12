@@ -11,15 +11,13 @@ import { authenticateToken, isAdmin } from '../middlewares/auth.js';
 
 const router = express.Router();
 
-// Public routes
+// Public routes - no authentication required
 router.get('/', getAllRequests);
 router.get('/:id', getRequestById);
-
-// Protected routes
 router.post('/', createRequest);
 
-// Admin routes
-router.put('/:id', authenticateToken, isAdmin, updateRequest);
+// Protected routes - require authentication
+router.put('/:id', authenticateToken, updateRequest);
 router.put('/:id/status', authenticateToken, isAdmin, updateRequestStatus);
 router.delete('/:id', authenticateToken, isAdmin, deleteRequest);
 
