@@ -5,10 +5,33 @@ import Request from './request.js';
 import Donor from './donor.js';
 import Donation from './donation.js';
 import Chat from './chat.js';
+import Expense from './expense.js';
 
 // User - Request Relationship
 User.hasMany(Request, { foreignKey: 'userId', onDelete: 'CASCADE' });
 Request.belongsTo(User, { foreignKey: 'userId' });
+
+// Request - Donation Relationship
+Request.hasMany(Donation, { 
+    foreignKey: 'requestId',
+    onDelete: 'CASCADE',
+    as: 'donations'
+});
+Donation.belongsTo(Request, { 
+    foreignKey: 'requestId',
+    as: 'request'
+});
+
+// Request - Expense Relationship
+Request.hasMany(Expense, {
+    foreignKey: 'requestId',
+    onDelete: 'CASCADE',
+    as: 'expenses'
+});
+Expense.belongsTo(Request, {
+    foreignKey: 'requestId',
+    as: 'request'
+});
 
 // User - Chat Relationship (as sender)
 User.hasMany(Chat, { foreignKey: 'senderId', as: 'sentChats', onDelete: 'CASCADE' });
@@ -41,5 +64,6 @@ export {
     AssistanceType,
     Donor,
     Donation,
-    Chat
+    Chat,
+    Expense
 };

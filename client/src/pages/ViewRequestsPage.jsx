@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Card, Tag, Space, Button, Input, Select, Tooltip } from 'antd';
-import { SearchOutlined, FilterOutlined, HeartOutlined } from '@ant-design/icons';
+import { Table, Card, Tag, Space, Button, Input, Select, Tooltip, Modal, Form, InputNumber, message, Descriptions } from 'antd';
+import { SearchOutlined, FilterOutlined, HeartOutlined, DollarOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
@@ -10,20 +10,66 @@ const ViewRequestsPage = () => {
     const [requests, setRequests] = useState([]);
     const [searchText, setSearchText] = useState('');
     const [filterStatus, setFilterStatus] = useState('all');
+    const [isDonationModalVisible, setIsDonationModalVisible] = useState(false);
+    const [isExpenseModalVisible, setIsExpenseModalVisible] = useState(false);
+    const [isFinancialSummaryVisible, setIsFinancialSummaryVisible] = useState(false);
+    const [selectedRequest, setSelectedRequest] = useState(null);
+    const [donationForm] = Form.useForm();
+    const [expenseForm] = Form.useForm();
+    const [financialSummary, setFinancialSummary] = useState(null);
+    const [expenseError, setExpenseError] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
-      const fetchRequests = async () => {
-        try {
-          const response = await axios.get(`${process.env.REACT_APP_API_URL}/requests`);
-          setRequests(response.data); // or response.data.data if your API wraps the array
-          console.log('Fetched requests:', response.data);
-        } catch (error) {
-          console.error('Error fetching requests:', error);
+        const token = localStorage.getItem('token');
+        if (token) {
+            axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
         }
-      };
-      fetchRequests();
     }, []);
+
+    useEffect(() => {
+        fetchRequests();
+    }, []);
+
+    const fetchRequests = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`${process.env.REACT_APP_API_URL}/requests`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            setRequests(response.data);
+        } catch (error) {
+            console.error('Error fetching requests:', error);
+            if (error.response?.status === 401) {
+                message.error('Please login to continue');
+                navigate('/login');
+            } else {
+                message.error('Failed to fetch requests');
+            }
+        }
+    };
+
+    const fetchFinancialSummary = async (requestId) => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`${process.env.REACT_APP_API_URL}/requests/${requestId}/financial-summary`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            setFinancialSummary(response.data);
+        } catch (error) {
+            console.error('Error fetching financial summary:', error);
+            if (error.response?.status === 401) {
+                message.error('Please login to continue');
+                navigate('/login');
+            } else {
+                message.error('Failed to fetch financial summary');
+            }
+        }
+    };
 
     const statusColors = {
         pending: 'gold',
@@ -32,13 +78,115 @@ const ViewRequestsPage = () => {
         completed: 'blue'
     };
 
-    const handleDonate = (requestId) => {
-        navigate(`/donate/${requestId}`);
+    const handleDonate = (request) => {
+        setSelectedRequest(request);
+        setIsDonationModalVisible(true);
+        donationForm.resetFields();
+    };
+
+    const handleAddExpense = (request) => {
+        setSelectedRequest(request);
+        setIsExpenseModalVisible(true);
+        expenseForm.resetFields();
+        setExpenseError(null);
+    };
+
+    const handleViewFinancialSummary = async (request) => {
+        setSelectedRequest(request);
+        await fetchFinancialSummary(request.id);
+        setIsFinancialSummaryVisible(true);
+    };
+
+    const handleDonationSubmit = async (values) => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.post(
+                `${process.env.REACT_APP_API_URL}/requests/${selectedRequest.id}/donations`,
+                {
+                    amount: values.amount,
+                    requestId: selectedRequest.id,
+                    status: 'completed'
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
+            
+            message.success('Donation submitted successfully!');
+            setIsDonationModalVisible(false);
+            donationForm.resetFields();
+            
+            // Update the request in the list
+            setRequests(prevRequests => 
+                prevRequests.map(req => 
+                    req.id === selectedRequest.id 
+                        ? { ...req, donationAmount: response.data.request.donationAmount }
+                        : req
+                )
+            );
+        } catch (error) {
+            console.error('Error submitting donation:', error);
+            if (error.response?.status === 401) {
+                message.error('Please login to continue');
+                navigate('/login');
+            } else {
+                message.error('Failed to submit donation');
+            }
+        }
+    };
+
+    const handleExpenseSubmit = async (values) => {
+        try {
+            setExpenseError(null);
+            const token = localStorage.getItem('token');
+            const response = await axios.post(
+                `${process.env.REACT_APP_API_URL}/requests/${selectedRequest.id}/expenses`,
+                {
+                    amount: values.amount,
+                    description: values.description,
+                    requestId: selectedRequest.id
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
+            
+            message.success('Expense added successfully!');
+            setIsExpenseModalVisible(false);
+            expenseForm.resetFields();
+            
+            // Refresh financial summary
+            await fetchFinancialSummary(selectedRequest.id);
+        } catch (error) {
+            console.error('Error adding expense:', error);
+            if (error.response?.status === 401) {
+                message.error('Please login to continue');
+                navigate('/login');
+            } else if (error.response?.data?.message === 'Insufficient funds') {
+                const { availableAmount, totalDonations, totalExpenses } = error.response.data;
+                setExpenseError({
+                    message: 'Insufficient Funds',
+                    details: {
+                        availableAmount: parseFloat(availableAmount).toFixed(2),
+                        totalDonations: parseFloat(totalDonations).toFixed(2),
+                        totalExpenses: parseFloat(totalExpenses).toFixed(2)
+                    }
+                });
+            } else {
+                setExpenseError({
+                    message: error.response?.data?.message || 'Failed to add expense'
+                });
+            }
+        }
     };
 
     const filteredRequests = requests.filter(request => {
         const matchesSearch =
-            request.title?.toLowerCase().includes(searchText.toLowerCase()) ||
+            request.applicantName?.toLowerCase().includes(searchText.toLowerCase()) ||
             request.description?.toLowerCase().includes(searchText.toLowerCase());
 
         const matchesStatus = filterStatus === 'all' || request.status === filterStatus;
@@ -47,12 +195,11 @@ const ViewRequestsPage = () => {
     });
 
     const columns = [
-        // {
-        //     title: 'Title',
-        //     dataIndex: 'title',
-        //     key: 'title',
-        //     sorter: (a, b) => (a.title || '').localeCompare(b.title || ''),
-        // },
+        {
+            title: 'Applicant Name',
+            dataIndex: 'applicantName',
+            key: 'applicantName',
+        },
         {
             title: 'Description',
             dataIndex: 'description',
@@ -71,13 +218,13 @@ const ViewRequestsPage = () => {
             dataIndex: 'headOfFamilyStatus',
             key: 'headOfFamilyStatus',
             render: (status) => (
-                <span style={{ fontWeight: 'bold'  }}>
+                <span style={{ fontWeight: 'bold' }}>
                     {status}
                 </span>
             ),
         },
         {
-            title: 'Type',
+            title: 'Assistance Type',
             dataIndex: 'assistanceType',
             key: 'assistanceType',
             filters: [
@@ -109,21 +256,26 @@ const ViewRequestsPage = () => {
             title: 'Actions',
             key: 'actions',
             render: (_, record) => (
-                <Space>
-                    <Button
+                <Space style={{display: 'flex', gap: '10px', flexWrap: 'wrap'}}>
+                    {/* <Button
                         type="primary"
                         icon={<HeartOutlined />}
-                        onClick={() => handleDonate(record._id)}
-                        disabled={record.status !== 'approved'}
+                        onClick={() => handleDonate(record)}
                     >
                         Donate
-                    </Button>
-                    {/* <Button
-                        type="link"
-                        onClick={() => navigate(`/requests/${record._id}`)}
-                    >
-                        View Details
                     </Button> */}
+                    <Button
+                        type="default"
+                        icon={<DollarOutlined />}
+                        onClick={() => handleAddExpense(record)}
+                    >
+                        Add Expense
+                    </Button>
+                    <Button
+                        onClick={() => handleViewFinancialSummary(record)}
+                    >
+                        View Summary
+                    </Button>
                 </Space>
             ),
         },
@@ -157,7 +309,7 @@ const ViewRequestsPage = () => {
                 <Table
                     columns={columns}
                     dataSource={filteredRequests}
-                    rowKey="_id"
+                    rowKey="id"
                     pagination={{
                         pageSize: 10,
                         showSizeChanger: true,
@@ -165,6 +317,152 @@ const ViewRequestsPage = () => {
                     }}
                 />
             </Card>
+
+            {/* Donation Modal */}
+            <Modal
+                title="Make a Donation"
+                open={isDonationModalVisible}
+                onCancel={() => {
+                    setIsDonationModalVisible(false);
+                    donationForm.resetFields();
+                }}
+                footer={null}
+            >
+                <Form
+                    form={donationForm}
+                    layout="vertical"
+                    onFinish={handleDonationSubmit}
+                    preserve={false}
+                >
+                    <Form.Item
+                        name="amount"
+                        label="Donation Amount"
+                        rules={[{ required: true, message: 'Please enter donation amount' }]}
+                    >
+                        <InputNumber
+                            style={{ width: '100%' }}
+                            min={1}
+                            prefix="$"
+                            placeholder="Enter amount"
+                        />
+                    </Form.Item>
+
+                    <Form.Item>
+                        <Button type="primary" htmlType="submit" block>
+                            Submit Donation
+                        </Button>
+                    </Form.Item>
+                </Form>
+            </Modal>
+
+            {/* Expense Modal */}
+            <Modal
+                title="Add Expense"
+                open={isExpenseModalVisible}
+                onCancel={() => {
+                    setIsExpenseModalVisible(false);
+                    expenseForm.resetFields();
+                    setExpenseError(null);
+                }}
+                footer={null}
+            >
+                <Form
+                    form={expenseForm}
+                    layout="vertical"
+                    onFinish={handleExpenseSubmit}
+                    preserve={false}
+                >
+                    {expenseError && (
+                        <div style={{ marginBottom: 16, padding: 12, backgroundColor: '#fff2f0', border: '1px solid #ffccc7', borderRadius: 4 }}>
+                            <p style={{ color: '#ff4d4f', marginBottom: 8 }}>{expenseError.message}</p>
+                            {expenseError.details && (
+                                <div style={{ fontSize: 14 }}>
+                                    <p>Available Amount: ${expenseError.details.availableAmount}</p>
+                                    <p>Total Donations: ${expenseError.details.totalDonations}</p>
+                                    <p>Total Expenses: ${expenseError.details.totalExpenses}</p>
+                                </div>
+                            )}
+                        </div>
+                    )}
+
+                    <Form.Item
+                        name="amount"
+                        label="Expense Amount"
+                        rules={[{ required: true, message: 'Please enter expense amount' }]}
+                    >
+                        <InputNumber
+                            style={{ width: '100%' }}
+                            min={1}
+                            prefix="$"
+                            placeholder="Enter amount"
+                        />
+                    </Form.Item>
+
+                    <Form.Item
+                        name="description"
+                        label="Description"
+                        rules={[{ required: true, message: 'Please enter expense description' }]}
+                    >
+                        <Input.TextArea rows={4} placeholder="Enter expense description" />
+                    </Form.Item>
+
+                    <Form.Item>
+                        <Button type="primary" htmlType="submit" block>
+                            Add Expense
+                        </Button>
+                    </Form.Item>
+                </Form>
+            </Modal>
+
+            {/* Financial Summary Modal */}
+            <Modal
+                title="Financial Summary"
+                open={isFinancialSummaryVisible}
+                onCancel={() => setIsFinancialSummaryVisible(false)}
+                footer={null}
+            >
+                {financialSummary && (
+                    <Descriptions bordered>
+                        <Descriptions.Item label="Total Donations" span={3}>
+                            ${parseFloat(financialSummary.totalDonations).toFixed(2)}
+                        </Descriptions.Item>
+                        <Descriptions.Item label="Total Expenses" span={3}>
+                            ${parseFloat(financialSummary.totalExpenses).toFixed(2)}
+                        </Descriptions.Item>
+                        <Descriptions.Item label="Remaining Amount" span={3}>
+                            ${parseFloat(financialSummary.remainingAmount).toFixed(2)}
+                        </Descriptions.Item>
+                    </Descriptions>
+                )}
+                {financialSummary?.expenses?.length > 0 && (
+                    <div style={{ marginTop: 16 }}>
+                        <h4>Expense History</h4>
+                        <Table
+                            dataSource={financialSummary.expenses}
+                            columns={[
+                                {
+                                    title: 'Date',
+                                    dataIndex: 'expenseDate',
+                                    key: 'expenseDate',
+                                    render: (date) => new Date(date).toLocaleDateString()
+                                },
+                                {
+                                    title: 'Amount',
+                                    dataIndex: 'amount',
+                                    key: 'amount',
+                                    render: (amount) => `$${parseFloat(amount).toFixed(2)}`
+                                },
+                                {
+                                    title: 'Description',
+                                    dataIndex: 'description',
+                                    key: 'description'
+                                }
+                            ]}
+                            pagination={false}
+                        />
+                    </div>
+                )}
+            </Modal>
         </div>
     );
 };

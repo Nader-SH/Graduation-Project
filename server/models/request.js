@@ -40,6 +40,11 @@ Request.init({
     description: {
         type: DataTypes.TEXT,
         allowNull: true
+    },
+    donationAmount: {
+        type: DataTypes.DECIMAL(10, 2),
+        allowNull: false,
+        defaultValue: 0
     }
 }, {
     sequelize,
