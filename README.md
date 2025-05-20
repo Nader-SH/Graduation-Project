@@ -43,24 +43,26 @@ Authorization: Bearer <your_jwt_token>
 |--------|----------|-------------|---------|
 | GET | `/requests` | Get all requests | Public |
 | GET | `/requests/:id` | Get request by ID | Public |
-| POST | `/requests` | Create request | Protected |
-| PUT | `/requests/:id` | Update request | Owner/Admin |
+| POST | `/requests` | Create request | Public |
+| PUT | `/requests/:id` | Update request | Protected |
 | DELETE | `/requests/:id` | Delete request | Admin |
 | PUT | `/requests/:id/status` | Update status | Admin |
-| GET | `/requests/user/:userId` | Get user's requests | Protected |
-| GET | `/requests/stats` | Get request statistics | Admin |
+| GET | `/requests/donations` | Get all donations | Public |
+| POST | `/requests/donations` | Add donation | Public |
+| GET | `/requests/donations/statistics` | Get donation statistics | Public |
+| POST | `/requests/:requestId/donations` | Add donation to specific request | Public |
+| POST | `/requests/:requestId/expenses` | Add expense to request | Public |
+| GET | `/requests/:requestId/financial-summary` | Get request financial summary | Public |
 
 #### 4. Donations
 | Method | Endpoint | Description | Access |
 |--------|----------|-------------|---------|
 | GET | `/donations` | Get all donations | Public |
 | GET | `/donations/:id` | Get donation by ID | Public |
-| POST | `/donations` | Create donation | Protected |
-| PUT | `/donations/:id` | Update donation | Admin |
-| DELETE | `/donations/:id` | Delete donation | Admin |
+| POST | `/donations` | Create donation | Public |
+| PUT | `/donations/:id` | Update donation | Public |
+| DELETE | `/donations/:id` | Delete donation | Public |
 | GET | `/donations/summary` | Get donation summary | Public |
-| GET | `/donations/user/:userId` | Get user's donations | Protected |
-| GET | `/donations/stats` | Get donation statistics | Admin |
 
 #### 5. Assistance Types
 | Method | Endpoint | Description | Access |
@@ -149,30 +151,6 @@ POST /api/auth/reset-password/:token
 }
 ```
 
-#### User APIs
-
-##### Get User Profile
-```http
-GET /api/users/profile
-```
-**Response:**
-```json
-{
-  "success": true,
-  "data": {
-    "id": "number",
-    "firstName": "string",
-    "lastName": "string",
-    "email": "string",
-    "type": "string",
-    "image": "string",
-    "status": "string",
-    "createdAt": "date",
-    "updatedAt": "date"
-  }
-}
-```
-
 #### Request APIs
 
 ##### Create Request
@@ -189,6 +167,38 @@ POST /api/requests
   "location": "string",
   "description": "string (optional)",
   "assistanceTypeId": "number"
+}
+```
+
+##### Add Donation to Request
+```http
+POST /api/requests/:requestId/donations
+```
+**Request Body:**
+```json
+{
+  "amount": "number",
+  "donationType": "one-time | monthly | quarterly | yearly",
+  "paymentMethod": "credit_card | bank_transfer | cash | other",
+  "donorName": "string",
+  "donorEmail": "string",
+  "donorPhone": "string (optional)",
+  "message": "string (optional)",
+  "isAnonymous": "boolean"
+}
+```
+
+##### Add Expense to Request
+```http
+POST /api/requests/:requestId/expenses
+```
+**Request Body:**
+```json
+{
+  "amount": "number",
+  "description": "string",
+  "category": "string",
+  "date": "date"
 }
 ```
 
@@ -298,7 +308,73 @@ npm install
 
 4. Set up environment variables
 ```bash
+# Create .env file from example
 cp .env.example .env
+```
+
+Then update the `.env` file with your configuration:
+
+```env
+# Server Configuration
+PORT=5000
+NODE_ENV=development
+
+# Database Configuration
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=graduation_project
+DB_USER=postgres
+DB_PASSWORD=your_password
+
+# JWT Configuration
+JWT_SECRET=your_jwt_secret_key
+JWT_EXPIRES_IN=24h
+JWT_REFRESH_SECRET=your_refresh_token_secret
+JWT_REFRESH_EXPIRES_IN=7d
+
+# Email Configuration (for password reset and verification)
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=your_email@gmail.com
+SMTP_PASS=your_email_app_password
+EMAIL_FROM=your_email@gmail.com
+
+# File Upload Configuration
+UPLOAD_PATH=uploads
+MAX_FILE_SIZE=5242880 # 5MB in bytes
+
+# Rate Limiting
+RATE_LIMIT_WINDOW_MS=60000 # 1 minute
+RATE_LIMIT_MAX_REQUESTS=100 # requests per window
+
+# CORS Configuration
+CORS_ORIGIN=http://localhost:3000
+
+# Logging
+LOG_LEVEL=debug
+
+# Security
+BCRYPT_SALT_ROUNDS=10
+
+# Optional: Redis Configuration (if using Redis for caching)
+# REDIS_HOST=localhost
+# REDIS_PORT=6379
+# REDIS_PASSWORD=
+
+# Optional: AWS Configuration (if using AWS services)
+# AWS_ACCESS_KEY_ID=your_aws_access_key
+# AWS_SECRET_ACCESS_KEY=your_aws_secret_key
+# AWS_REGION=your_aws_region
+# AWS_BUCKET_NAME=your_bucket_name
+
+# Optional: Payment Gateway Configuration (if implementing payments)
+# STRIPE_SECRET_KEY=your_stripe_secret_key
+# STRIPE_PUBLISHABLE_KEY=your_stripe_publishable_key
+
+# Optional: SMS Gateway Configuration (if implementing SMS)
+# TWILIO_ACCOUNT_SID=your_twilio_account_sid
+# TWILIO_AUTH_TOKEN=your_twilio_auth_token
+# TWILIO_PHONE_NUMBER=your_twilio_phone_number
 ```
 
 5. Start the backend development server
