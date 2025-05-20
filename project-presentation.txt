@@ -7,13 +7,39 @@
 
 الجزء التقني (Backend):
 -----------------------
-في البداية، قمنا ببناء الباك إند (الخادم) باستخدام Node.js و Express.js، وهي تقنيات حديثة وقوية لبناء تطبيقات الويب. 
+Backend
+Node.js
+Express.js (web framework)
+Sequelize (ORM)
+PostgreSQL (database)
+pg (PostgreSQL client for Node.js)
+bcrypt and bcryptjs (password hashing)
+cors (Cross-Origin Resource Sharing)
+dotenv (environment variable management)
+joi (input validation)
+jsonwebtoken (JWT authentication)
+cookie-parser (cookie handling)
+compression (response compression)
+nodemon (development server auto-reload)
+http-errors (error handling)
+pg-hstore (PostgreSQL hstore support)
 
-لماذا اخترنا هذه التقنيات؟
-- سريعة وفعالة في معالجة الطلبات
-- تدعم العمل بشكل متزامن
-- لديها مجتمع كبير ومكتبات كثيرة
-- سهلة في التطوير والصيانة
+
+
+Frontend
+React 19 (core UI library)
+react-dom 19 (DOM bindings for React)
+react-router-dom 7 (routing)
+Ant Design 5 (UI component library)
+Axios (HTTP client)
+react-icons 5 (icon library)
+react-scripts (Create React App scripts)
+web-vitals (performance measurement)
+@testing-library/react (React component testing)
+@testing-library/jest-dom (custom Jest matchers for DOM nodes)
+@testing-library/user-event (user event simulation for tests)
+@testing-library/dom (DOM testing utilities)
+Create React App (for bootstrapping the frontend project)
 
 قاعدة البيانات:
 --------------
@@ -37,7 +63,7 @@
 - نظام مصادقة قوي باستخدام JWT (JSON Web Tokens)
 - تشفير كلمات المرور باستخدام bcrypt
 - حماية من هجمات XSS و CSRF
-- نظام صلاحيات متعدد المستويات (Admin, Donor, Recipient)
+- نظام صلاحيات متعدد المستويات (Admin, Donor)
 
 الميزات الرئيسية:
 ----------------
@@ -183,104 +209,4 @@
 - أداء عالي
 - قابلية للتوسع
 - سهولة الصيانة
-- تجربة مستخدم سلسة
-
-إعداد المشروع:
--------------
-1. نسخ المستودع:
-```bash
-git clone https://github.com/your-username/Graduation-Project.git
-```
-
-2. تثبيت اعتماديات الباك إند:
-```bash
-cd Graduation-Project/server
-npm install
-```
-
-3. تثبيت اعتماديات الفرونت إند:
-```bash
-cd ../client
-npm install
-```
-
-4. إعداد متغيرات البيئة:
-```bash
-# إنشاء ملف .env من المثال
-cp .env.example .env
-```
-
-ثم قم بتحديث ملف `.env` بإعداداتك:
-
-```env
-# إعدادات الخادم
-PORT=5000
-NODE_ENV=development
-
-# إعدادات قاعدة البيانات
-DB_HOST=localhost
-DB_PORT=5432
-DB_NAME=graduation_project
-DB_USER=postgres
-DB_PASSWORD=your_password
-
-# إعدادات JWT
-JWT_SECRET=your_jwt_secret_key
-JWT_EXPIRES_IN=24h
-JWT_REFRESH_SECRET=your_refresh_token_secret
-JWT_REFRESH_EXPIRES_IN=7d
-
-# إعدادات البريد الإلكتروني (لإعادة تعيين كلمة المرور والتحقق)
-SMTP_HOST=smtp.gmail.com
-SMTP_PORT=587
-SMTP_USER=your_email@gmail.com
-SMTP_PASS=your_email_app_password
-EMAIL_FROM=your_email@gmail.com
-
-# إعدادات رفع الملفات
-UPLOAD_PATH=uploads
-MAX_FILE_SIZE=5242880 # 5MB بالبايت
-
-# إعدادات تحديد معدل الطلبات
-RATE_LIMIT_WINDOW_MS=60000 # دقيقة واحدة
-RATE_LIMIT_MAX_REQUESTS=100 # طلب في النافذة
-
-# إعدادات CORS
-CORS_ORIGIN=http://localhost:3000
-
-# إعدادات التسجيل
-LOG_LEVEL=debug
-
-# إعدادات الأمان
-BCRYPT_SALT_ROUNDS=10
-
-# اختياري: إعدادات Redis (إذا كنت تستخدم Redis للتخزين المؤقت)
-# REDIS_HOST=localhost
-# REDIS_PORT=6379
-# REDIS_PASSWORD=
-
-# اختياري: إعدادات AWS (إذا كنت تستخدم خدمات AWS)
-# AWS_ACCESS_KEY_ID=your_aws_access_key
-# AWS_SECRET_ACCESS_KEY=your_aws_secret_key
-# AWS_REGION=your_aws_region
-# AWS_BUCKET_NAME=your_bucket_name
-
-# اختياري: إعدادات بوابة الدفع (إذا كنت تنفذ المدفوعات)
-# STRIPE_SECRET_KEY=your_stripe_secret_key
-# STRIPE_PUBLISHABLE_KEY=your_stripe_publishable_key
-
-# اختياري: إعدادات بوابة الرسائل القصيرة (إذا كنت تنفذ الرسائل القصيرة)
-# TWILIO_ACCOUNT_SID=your_twilio_account_sid
-# TWILIO_AUTH_TOKEN=your_twilio_auth_token
-# TWILIO_PHONE_NUMBER=your_twilio_phone_number
-```
-
-5. تشغيل خادم التطوير للباك إند:
-```bash
-npm run dev
-```
-
-6. تشغيل خادم التطوير للفرونت إند:
-```bash
-npm start
-``` 
+- تجربة مستخدم سلسة 

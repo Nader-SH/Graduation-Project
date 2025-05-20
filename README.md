@@ -1,6 +1,44 @@
 # Graduation-Project
 Graduation Project University of Palestine
 
+### Technologies Used
+
+#### Backend
+- **Node.js**
+- **Express.js** (web framework)
+- **Sequelize** (ORM)
+- **PostgreSQL** (database)
+- **pg** (PostgreSQL client for Node.js)
+- **bcrypt** and **bcryptjs** (password hashing)
+- **cors** (Cross-Origin Resource Sharing)
+- **dotenv** (environment variable management)
+- **joi** (input validation)
+- **jsonwebtoken** (JWT authentication)
+- **cookie-parser** (cookie handling)
+- **compression** (response compression)
+- **nodemon** (development server auto-reload)
+- **http-errors** (error handling)
+- **pg-hstore** (PostgreSQL hstore support)
+
+#### Frontend
+- **React 19** (core UI library)
+- **react-dom 19** (DOM bindings for React)
+- **react-router-dom 7** (routing)
+- **Ant Design 5** (UI component library)
+- **Axios** (HTTP client)
+- **react-icons 5** (icon library)
+- **react-scripts** (Create React App scripts)
+- **web-vitals** (performance measurement)
+- **@testing-library/react** (React component testing)
+- **@testing-library/jest-dom** (custom Jest matchers for DOM nodes)
+- **@testing-library/user-event** (user event simulation for tests)
+- **@testing-library/dom** (DOM testing utilities)
+- **Create React App** (for bootstrapping the frontend project)
+
+### Database Structure
+You can view the complete database diagram and relationships at:
+[Database Diagram](https://drawsql.app/teams/nader-shak/diagrams/new-graduation-project)
+
 ## API Documentation
 
 ### Base URL
@@ -333,41 +371,5 @@ npm run dev
 ```bash
 npm start
 ```
-
-### Technologies Used
-
-#### Backend
-- **Node.js**
-- **Express.js** (web framework)
-- **Sequelize** (ORM)
-- **PostgreSQL** (database)
-- **pg** (PostgreSQL client for Node.js)
-- **bcrypt** and **bcryptjs** (password hashing)
-- **cors** (Cross-Origin Resource Sharing)
-- **dotenv** (environment variable management)
-- **joi** (input validation)
-- **jsonwebtoken** (JWT authentication)
-- **cookie-parser** (cookie handling)
-- **compression** (response compression)
-- **nodemon** (development server auto-reload)
-- **http-errors** (error handling)
-- **pg-hstore** (PostgreSQL hstore support)
-
-#### Frontend
-- **React 19** (core UI library)
-- **react-dom 19** (DOM bindings for React)
-- **react-router-dom 7** (routing)
-- **Ant Design 5** (UI component library)
-- **Axios** (HTTP client)
-- **react-icons 5** (icon library)
-- **react-scripts** (Create React App scripts)
-- **web-vitals** (performance measurement)
-- **@testing-library/react** (React component testing)
-- **@testing-library/jest-dom** (custom Jest matchers for DOM nodes)
-- **@testing-library/user-event** (user event simulation for tests)
-- **@testing-library/dom** (DOM testing utilities)
-- **Create React App** (for bootstrapping the frontend project)
-
----
 
 For any questions or issues, please open an issue on the repository or contact the maintainers.
