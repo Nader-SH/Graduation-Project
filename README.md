@@ -291,7 +291,7 @@ Common HTTP Status Codes:
 
 1. Clone the repository
 ```bash
-git clone https://github.com/your-username/Graduation-Project.git
+git clone https://github.com/Nader-SH/Graduation-Project.git
 ```
 
 2. Install backend dependencies
