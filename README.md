@@ -1,6 +1,12 @@
 # Graduation-Project
 Graduation Project University of Palestine
 
+## Project Description
+Our project is a Charity Management System, a platform designed to facilitate and organize the process of providing and distributing charitable assistance in a structured and transparent manner.
+
+## وصف المشروع
+مشروعنا هو نظام إدارة المساعدات الخيرية، وهو منصة تهدف إلى تسهيل عملية تقديم المساعدات وتوزيعها بشكل منظم وشفاف.
+
 ### Technologies Used
 
 #### Backend
