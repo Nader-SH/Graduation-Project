@@ -316,65 +316,12 @@ Then update the `.env` file with your configuration:
 
 ```env
 # Server Configuration
-PORT=5000
+PORT=8000
+DATABASE_URL=postgres://username:password@localhost:5432/database_name
+DATABASE_URL_PRODUCTION=your_production_database_url
+SECRET_KEY=your_secret_key_here
+JWT_SECRET=your_jwt_secret_here
 NODE_ENV=development
-
-# Database Configuration
-DB_HOST=localhost
-DB_PORT=5432
-DB_NAME=graduation_project
-DB_USER=postgres
-DB_PASSWORD=your_password
-
-# JWT Configuration
-JWT_SECRET=your_jwt_secret_key
-JWT_EXPIRES_IN=24h
-JWT_REFRESH_SECRET=your_refresh_token_secret
-JWT_REFRESH_EXPIRES_IN=7d
-
-# Email Configuration (for password reset and verification)
-SMTP_HOST=smtp.gmail.com
-SMTP_PORT=587
-SMTP_USER=your_email@gmail.com
-SMTP_PASS=your_email_app_password
-EMAIL_FROM=your_email@gmail.com
-
-# File Upload Configuration
-UPLOAD_PATH=uploads
-MAX_FILE_SIZE=5242880 # 5MB in bytes
-
-# Rate Limiting
-RATE_LIMIT_WINDOW_MS=60000 # 1 minute
-RATE_LIMIT_MAX_REQUESTS=100 # requests per window
-
-# CORS Configuration
-CORS_ORIGIN=http://localhost:3000
-
-# Logging
-LOG_LEVEL=debug
-
-# Security
-BCRYPT_SALT_ROUNDS=10
-
-# Optional: Redis Configuration (if using Redis for caching)
-# REDIS_HOST=localhost
-# REDIS_PORT=6379
-# REDIS_PASSWORD=
-
-# Optional: AWS Configuration (if using AWS services)
-# AWS_ACCESS_KEY_ID=your_aws_access_key
-# AWS_SECRET_ACCESS_KEY=your_aws_secret_key
-# AWS_REGION=your_aws_region
-# AWS_BUCKET_NAME=your_bucket_name
-
-# Optional: Payment Gateway Configuration (if implementing payments)
-# STRIPE_SECRET_KEY=your_stripe_secret_key
-# STRIPE_PUBLISHABLE_KEY=your_stripe_publishable_key
-
-# Optional: SMS Gateway Configuration (if implementing SMS)
-# TWILIO_ACCOUNT_SID=your_twilio_account_sid
-# TWILIO_AUTH_TOKEN=your_twilio_auth_token
-# TWILIO_PHONE_NUMBER=your_twilio_phone_number
 ```
 
 5. Start the backend development server
