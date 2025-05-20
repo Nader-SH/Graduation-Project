@@ -45,6 +45,53 @@ Our project is a Charity Management System, a platform designed to facilitate an
 You can view the complete database diagram and relationships at:
 [Database Diagram](https://drawsql.app/teams/nader-shak/diagrams/new-graduation-project)
 
+### Development Setup
+
+1. Clone the repository
+```bash
+git clone https://github.com/Nader-SH/Graduation-Project.git
+```
+
+2. Install backend dependencies
+```bash
+cd Graduation-Project/server
+npm install
+```
+
+3. Install frontend dependencies
+```bash
+cd ../client
+npm install
+```
+
+4. Set up environment variables
+```bash
+# Create .env file from example
+cp .env.example .env
+```
+
+Then update the `.env` file with your configuration:
+
+```env
+# Server Configuration
+PORT=8000
+DATABASE_URL=postgres://username:password@localhost:5432/database_name
+DATABASE_URL_PRODUCTION=your_production_database_url
+SECRET_KEY=your_secret_key_here
+JWT_SECRET=your_jwt_secret_here
+NODE_ENV=development
+```
+
+5. Start the backend development server
+```bash
+npm run dev
+```
+
+6. Start the frontend development server
+```bash
+npm start
+```
+
 ## API Documentation
 
 ### Base URL
@@ -330,52 +377,5 @@ Common HTTP Status Codes:
 - Authenticated users: 100 requests per minute
 - Unauthenticated users: 30 requests per minute
 - Admin endpoints: 200 requests per minute
-
-### Development Setup
-
-1. Clone the repository
-```bash
-git clone https://github.com/Nader-SH/Graduation-Project.git
-```
-
-2. Install backend dependencies
-```bash
-cd Graduation-Project/server
-npm install
-```
-
-3. Install frontend dependencies
-```bash
-cd ../client
-npm install
-```
-
-4. Set up environment variables
-```bash
-# Create .env file from example
-cp .env.example .env
-```
-
-Then update the `.env` file with your configuration:
-
-```env
-# Server Configuration
-PORT=8000
-DATABASE_URL=postgres://username:password@localhost:5432/database_name
-DATABASE_URL_PRODUCTION=your_production_database_url
-SECRET_KEY=your_secret_key_here
-JWT_SECRET=your_jwt_secret_here
-NODE_ENV=development
-```
-
-5. Start the backend development server
-```bash
-npm run dev
-```
-
-6. Start the frontend development server
-```bash
-npm start
-```
 
 For any questions or issues, please open an issue on the repository or contact the maintainers.
